@@ -32,7 +32,7 @@ class UserPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/User/Resources/User'), for: 'App\Filament\User\Resources\User')
+            ->discoverResources(in: app_path('Filament/Resources/User'), for: 'App\Filament\Resources\User')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
