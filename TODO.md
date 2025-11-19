@@ -1,0 +1,2 @@
+- [x] Register Filament resources in AdminPanelProvider.php to make navigation buttons appear in admin dashboard sidebar
+- [x] Fix namespace conflicts between admin and user panel resources
