@@ -1,9 +1,9 @@
-# Integrate Laravel Breeze with Filament User Panel
+# TODO for Tugas Form Implementation
 
-## Pending Tasks
-- [ ] Change UserPanelProvider path from '' to 'user' to avoid conflict with root route
-- [ ] Add loginUrl('/login') to UserPanelProvider to use Breeze login
-- [ ] Update AuthenticatedSessionController to redirect to '/user' after login instead of 'dashboard'
-- [ ] Modify /dashboard route in web.php to redirect to '/user'
-- [ ] Update welcome.blade.php to link to '/user' instead of '/dashboard' when authenticated
-- [ ] Test the authentication flow to ensure login leads to Filament user panel
+- [ ] Update app/Filament/Resources/Admin/Tasks/TasksResource.php:
+  - Correct model import to App\Models\Tugas
+  - Remove the table method to disable table functionality
+  - Remove 'index' from getPages() to disable listing page
+- [ ] Update app/Filament/Resources/Admin/Tasks/Schemas/TasksForm.php:
+  - Add a TextInput field for 'title' to make the form functional
+- [ ] Test the form in the admin panel (create and edit pages)
