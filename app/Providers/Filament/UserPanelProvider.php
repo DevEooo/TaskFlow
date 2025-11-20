@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Auth;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -24,15 +25,14 @@ class UserPanelProvider extends PanelProvider
     {
         return $panel
             ->id('user')
-            ->path('dashboard-user') // User accesses here
-            ->login() // FIXED: Left empty to use default Filament login
-            ->registration() // ADDED: Allows users to register themselves
-            ->passwordReset() // ADDED: Allows password recovery
-            ->emailVerification() // ADDED: Good practice
+            ->path('dashboard-user')
+            ->login()
+            ->registration()
+            ->passwordReset()
+            ->emailVerification()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            // CRITICAL: Look in a specific 'User' subfolder
             ->discoverResources(in: app_path('Filament/Resources/User'), for: 'App\\Filament\\Resources\\User')
             ->discoverPages(in: app_path('Filament/Pages/User'), for: 'App\\Filament\\Pages\\User')
             ->pages([
@@ -56,6 +56,10 @@ class UserPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->authGuard('web')
+            // Redirect admins to admin panel after login
+            ->loginRouteSlug('login')
+            ->authPasswordBroker('users');
     }
 }

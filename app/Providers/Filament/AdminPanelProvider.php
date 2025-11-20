@@ -24,13 +24,11 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->id('admin')
-            ->path('dashboard-admin') // Admins access here
-            ->login() // FIXED: Left empty
-            // NOTE: No ->registration() here. Admins must be created via database/tinker.
+            ->path('dashboard-admin')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
-            // CRITICAL: Look in a specific 'Admin' subfolder
             ->discoverResources(in: app_path('Filament/Resources/Admin'), for: 'App\\Filament\\Resources\\Admin')
             ->discoverPages(in: app_path('Filament/Pages/Admin'), for: 'App\\Filament\\Pages\\Admin')
             ->pages([
@@ -54,6 +52,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->authGuard('web');
     }
 }
