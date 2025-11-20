@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\User\Resources\User\ListTugas\Tables;
+namespace App\Filament\Resources\User\ListTugas\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -19,12 +19,10 @@ class ListTugasTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                //
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                //
             ]);
     }
 }

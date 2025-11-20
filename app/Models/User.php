@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Panel;
 
 class User extends Authenticatable
 {
@@ -20,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -31,6 +33,21 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // If the user is trying to access the 'admin' panel
+        if ($panel->getId() === 'admin') {
+            return $this->role === 'admin';
+        }
+
+        // If the user is trying to access the 'user' panel
+        if ($panel->getId() === 'user') {
+            return $this->role === 'user';
+        }
+
+        return false;
+    }
 
     /**
      * Get the attributes that should be cast.
