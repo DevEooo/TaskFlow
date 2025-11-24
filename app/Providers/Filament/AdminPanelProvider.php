@@ -24,7 +24,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->id('admin')
-            ->path('dashboard-admin')
+            ->path('admin')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -52,6 +52,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                \App\Http\Middleware\AdminMiddleware::class,
             ])
             ->authGuard('web');
     }

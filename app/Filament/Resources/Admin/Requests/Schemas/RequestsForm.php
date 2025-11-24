@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\Admin\Users\Schemas;
+namespace App\Filament\Resources\Admin\Requests\Schemas;
 
 use Filament\Schemas\Schema;
 
-class UsersForm
+class RequestsForm
 {
     public static function configure(Schema $schema): Schema
     {

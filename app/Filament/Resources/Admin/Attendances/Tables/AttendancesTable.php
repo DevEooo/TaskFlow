@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Admin\Users\Tables;
+namespace App\Filament\Resources\Attendances\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
-class UsersTable
+class AttendancesTable
 {
     public static function configure(Table $table): Table
     {
@@ -19,18 +17,16 @@ class UsersTable
                 //
             ])
             ->filters([
-                TrashedFilter::make(),
+                //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
 }
-

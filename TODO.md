@@ -1,9 +1,6 @@
-# TODO for Tugas Form Implementation
+# TODO: Fix Admin Login Redirect Issue
 
-- [ ] Update app/Filament/Resources/Admin/Tasks/TasksResource.php:
-  - Correct model import to App\Models\Tugas
-  - Remove the table method to disable table functionality
-  - Remove 'index' from getPages() to disable listing page
-- [ ] Update app/Filament/Resources/Admin/Tasks/Schemas/TasksForm.php:
-  - Add a TextInput field for 'title' to make the form functional
-- [ ] Test the form in the admin panel (create and edit pages)
+## Steps to Complete
+- [x] Edit AdminMiddleware.php to allow unauthenticated access to admin login page
+- [x] Edit UserMiddleware.php to allow unauthenticated access to user login page
+- [ ] Test the admin login functionality

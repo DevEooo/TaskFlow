@@ -14,12 +14,12 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
 class UsersResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Users::class;
     protected static ?string $navigationLabel = 'Daftar User';
     protected static ?string $slug = "users";
     protected static ?string $label = "Data Daftar User";
@@ -53,6 +53,12 @@ class UsersResource extends Resource
         ];
     }
 
-
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 }
 
