@@ -14,8 +14,17 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
 use UnitEnum;
+
+use Filament\Tables\Table;
+use Filament\Actions\EditAction; 
+use Filament\Tables\Actions\DeleteAction; 
+use Filament\Tables\Columns; 
+use Filament\Tables\Filters\Filter;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Tables\Actions;
+use Filament\Tables\Columns\TextColumn;
 
 class AbsensiResource extends Resource
 {
@@ -25,19 +34,59 @@ class AbsensiResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
-    public static function form(Schema $schema): Schema
-    {
-        return AbsensiForm::configure($schema);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return AbsensiInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
-        return AbsensisTable::configure($table);
+        return $table
+            ->columns([
+                // 1. Nama User
+                TextColumn::make('user.name')
+                    ->label('Nama OB')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold'),
+
+                // 2. Shift (Jika diimplementasikan)
+                TextColumn::make('shift.name')
+                    ->label('Shift')
+                    ->badge()
+                    ->color('gray'),
+
+                // 3. Waktu Check In
+                TextColumn::make('check_in')
+                    ->label('Masuk')
+                    ->dateTime('H:i')
+                    ->sortable(),
+
+                // 4. Waktu Check Out
+                TextColumn::make('check_out')
+                    ->label('Pulang')
+                    ->dateTime('H:i')
+                    ->placeholder('Belum Pulang'),
+                
+                // 5. STATUS
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'on_time' => 'success',
+                        'late' => 'danger',
+                        default => 'warning',
+                    }),
+                    
+                // 🛑 KOLOM BUKTI FOTO DIHILANGKAN UNTUK KESEDERHANAAN
+                // Hapus atau Komentar baris ini jika sebelumnya ada:
+                // Tables\Columns\ImageColumn::make('photo_path')->label('Bukti')
+                
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->filters([
+                Filter::make('today')
+                    ->label('Hadir Hari Ini')
+                    ->query(fn ($query) => $query->whereDate('created_at', today())),
+            ])
+            ->actions([
+                EditAction::make(),
+                // DeleteAction::make(), // Fitur untuk delete
+            ]);
     }
 
     public static function getRelations(): array
@@ -52,8 +101,8 @@ class AbsensiResource extends Resource
         return [
             'index' => ListAbsensis::route('/'),
             'create' => CreateAbsensi::route('/create'),
-            'view' => ViewAbsensi::route('/{record}'),
             'edit' => EditAbsensi::route('/{record}/edit'),
         ];
     }
 }
+

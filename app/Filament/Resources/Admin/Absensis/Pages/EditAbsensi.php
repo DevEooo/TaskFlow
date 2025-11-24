@@ -3,8 +3,7 @@
 namespace App\Filament\Resources\Admin\Absensis\Pages;
 
 use App\Filament\Resources\Admin\Absensis\AbsensiResource;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditAbsensi extends EditRecord
@@ -14,8 +13,7 @@ class EditAbsensi extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
-            DeleteAction::make(),
+            Actions\DeleteAction::make(),
         ];
     }
 }
