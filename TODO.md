@@ -1,6 +1,11 @@
-# TODO: Fix Admin Login Redirect Issue
+# Refactoring BuktiKerja, LogTugas, and Tugas Resources
 
-## Steps to Complete
-- [x] Edit AdminMiddleware.php to allow unauthenticated access to admin login page
-- [x] Edit UserMiddleware.php to allow unauthenticated access to user login page
-- [ ] Test the admin login functionality
+## Tasks
+- [ ] Update BuktiKerjaResource.php: namespace to BuktiKerja, class to BuktiKerjaResource, model to BuktiKerja, rename file to BuktiKerjaResource.php (already is), update references
+- [ ] Rename and update BuktiKerja pages, schemas, tables files and content
+- [ ] Update LogTugasResource.php: namespace to LogTugas, class to LogTugasResource (already), model Tugas, rename file to LogTugasResource.php (already), update references
+- [ ] Rename and update LogTugas pages, schemas, tables files and content
+- [ ] Update TugasResource.php: namespace to Tugas, class to TugasResource, model Tugas, rename file to TugasResource.php (already), update references
+- [ ] Rename and update Tugas pages, schemas, tables files and content
+- [ ] Run composer dump-autoload
+- [ ] Verify no other references
