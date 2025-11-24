@@ -2,16 +2,11 @@
 
 namespace App\Filament\Resources\Admin\Users\Schemas;
 
-use Filament\Schemas\Schema;
+use Filament\Forms\Form;
+use Filament\Forms;
 
 class UsersForm
 {
-    public static function configure(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                //
-            ]);
-    }
+
 }
 
