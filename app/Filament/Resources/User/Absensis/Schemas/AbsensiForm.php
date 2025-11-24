@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\User\Resources\User\Absensis\Schemas;
+namespace App\Filament\Resources\User\Absensis\Schemas;
 
 use Filament\Schemas\Schema;
 
