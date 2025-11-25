@@ -1,4 +1,4 @@
-# 📊 OB Monitoring Study Case
+# TaskFlow (Office Boy / OB Monitoring Study Case)
 
 ## Project Overview
 
@@ -6,7 +6,7 @@ This repository contains the solution for the **OB Monitoring** study case. The 
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Techstack
 
 This project was developed using a modern, robust, and scalable technology stack:
 
