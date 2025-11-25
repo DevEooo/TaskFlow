@@ -58,3 +58,4 @@ class UserPanelProvider extends PanelProvider
             ->authGuard('web');
     }
 }
+
