@@ -6,7 +6,7 @@ use App\Filament\Resources\User\BuktiKerjas\Pages\CreateBuktiKerja;
 use App\Filament\Resources\User\BuktiKerjas\Pages\EditBuktiKerja;
 use App\Filament\Resources\User\BuktiKerjas\Pages\ListBuktiKerjas;
 use App\Filament\Resources\User\BuktiKerjas\Schemas\BuktiKerjaForm;
-use App\Filament\Resources\User\BuktiKerjas\Tables\BuktiKerjasTable;
+use App\Filament\Resources\User\BuktiKerjas\Table\BuktiKerjasTable;
 use App\Models\BuktiKerja;
 use BackedEnum;
 use Filament\Resources\Resource;

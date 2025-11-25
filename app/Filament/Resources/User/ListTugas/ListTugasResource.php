@@ -19,7 +19,7 @@ class ListTugasResource extends Resource
 {
     protected static ?string $model = Tugas::class;
     protected static ?string $slug = "list-tugas";
-    protected static ?string $label = "Daftar List Tugas";
+    protected static ?string $label = "List Tugasku";
     protected static string | UnitEnum | null $navigationGroup = 'Kelola';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocument;
 
