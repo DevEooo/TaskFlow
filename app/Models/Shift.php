@@ -16,9 +16,4 @@ class Shift extends Model
         'start_time',
         'end_time',
     ];
-
-    public function getNameAttribute()
-    {
-        return $this->nama_shift;
-    }
 }

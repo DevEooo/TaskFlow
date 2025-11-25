@@ -74,7 +74,7 @@ class JadwalShiftResource extends Resource
                     ->searchable()
                     ->sortable(),
                 
-                Columns\TextColumn::make('shift.nama_shift')
+                Columns\TextColumn::make('shift.name')
                     ->label('Shift')
                     ->badge()
                     ->sortable(),
