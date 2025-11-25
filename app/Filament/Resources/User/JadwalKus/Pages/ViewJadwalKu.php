@@ -9,11 +9,4 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewJadwalKu extends ViewRecord
 {
     protected static string $resource = JadwalKuResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            EditAction::make(),
-        ];
-    }
 }

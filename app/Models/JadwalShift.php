@@ -29,6 +29,6 @@ class JadwalShift extends Model
 
     public function shift(): BelongsTo
     {
-        return $this->belongsTo(Shift::class);
+        return $this->belongsTo(Shift::class, 'shift_id');
     }
 }

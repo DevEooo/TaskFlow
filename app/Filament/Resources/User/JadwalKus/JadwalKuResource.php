@@ -24,18 +24,17 @@ class JadwalKuResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = 'Kelola';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
-    public static function form(Schema $schema): Schema
-    {
-        return JadwalKuForm::configure($schema);
-    }
-
     // --- PERBAIKAN DI SINI: Global Scope untuk Resource ini ---
     public static function getEloquentQuery(): Builder
     {
         // Kita panggil parent query dulu agar scope bawaan Filament (seperti SoftDelete) tetap jalan
         return parent::getEloquentQuery()
-            ->where('user_id', auth()->id()) // Filter hanya punya user yang login
-            ->with('shift'); // Eager load relasi shift di sini agar lebih efisien
+        // ⭐ TAMBAHKAN FILTER INI
+        ->whereNotNull('shift_id') 
+        // ⭐ TAMBAHKAN FILTER INI
+        ->where('user_id', auth()->id()) 
+        ->with('shift')
+        ->orderBy('date', 'asc'); // Eager load relasi shift di sini agar lebih efisien
     }
 
     public static function canCreate(): bool { return false; }
@@ -74,6 +73,8 @@ class JadwalKuResource extends Resource
             ]);
     }
 
+
+    
     public static function getPages(): array
     {
         return [
