@@ -21,7 +21,7 @@ class BuktiKerjaResource extends Resource
     protected static ?string $slug = "bukti-kerja";
     protected static ?string $label = "Upload Bukti Kerja";
     protected static ?string $navigationLabel = 'Upload';
-    protected static string | UnitEnum | null $navigationGroup = 'Kelola Tugas';
+    protected static string | UnitEnum | null $navigationGroup = 'Kelola';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCamera;
 
     public static function form(Schema $schema): Schema

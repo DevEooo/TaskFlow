@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Absensi extends Model
 {
     use HasFactory;
-
-    // PENTING: Paksa model ini menggunakan tabel 'attendances'
     protected $table = 'absensi'; 
 
     protected $fillable = [
@@ -25,8 +23,6 @@ class Absensi extends Model
         'latitude',
         'longitude',
     ];
-
-    // Relasi ke User agar User Panel tahu siapa yang login
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

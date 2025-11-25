@@ -27,9 +27,6 @@ class CreateAbsensi extends CreateRecord
         $user = auth()->user();
         $statusInput = $data['status']; // 'check_in' atau 'check_out' dari form
 
-        // ---------------------------------------------------------
-        // SKENARIO 1: CHECK IN
-        // ---------------------------------------------------------
         if ($statusInput === 'check_in') {
             // Cek apakah user sudah check-in hari ini?
             $existingCheckIn = Absensi::where('user_id', $user->id)

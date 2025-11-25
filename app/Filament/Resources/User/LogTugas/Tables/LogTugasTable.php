@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Admin\BuktiKerjas\Tables;
+namespace App\Filament\Resources\User\LogTugas\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,12 +9,18 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class BuktiKerjasTable
+class LogTugasTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
+                TextColumn::make('lokasi')
+                    ->searchable(),
+                TextColumn::make('photo_before')
+                    ->searchable(),
+                TextColumn::make('photo_after')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

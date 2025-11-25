@@ -3,11 +3,10 @@
 namespace App\Filament\Resources\Shifts\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class ShiftsTable
@@ -19,7 +18,7 @@ class ShiftsTable
                 //
             ])
             ->filters([
-                TrashedFilter::make(),
+                //
             ])
             ->recordActions([
                 EditAction::make(),

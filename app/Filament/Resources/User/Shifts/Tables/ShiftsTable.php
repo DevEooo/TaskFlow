@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Admin\LogTugas\Tables;
+namespace App\Filament\Resources\User\Shifts\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -8,7 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
-class LogTugasTable
+class ShiftsTable
 {
     public static function configure(Table $table): Table
     {

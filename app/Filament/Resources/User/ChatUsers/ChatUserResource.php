@@ -28,11 +28,6 @@ class ChatUserResource extends Resource
         return ChatUserForm::configure($schema);
     }
 
-    public static function table(Table $table): Table
-    {
-        return ChatUsersTable::configure($table);
-    }
-
     public static function getRelations(): array
     {
         return [

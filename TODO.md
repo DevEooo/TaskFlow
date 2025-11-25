@@ -1,3 +1,7 @@
 - [ ] Update getUrl method signature in AbsensiResource.php to match parent Resource class
 - [ ] Update form method signature and implementation in AbsensiResource.php to use Schema
 - [ ] Add import for Filament\Schemas\Schema in AbsensiResource.php
+- [x] Remove getRecordRouteBindingEloquentQuery method from ShiftsResource.php
+- [x] Remove TrashedFilter from ShiftsTable.php
+- [x] Remove ForceDeleteBulkAction and RestoreBulkAction from ShiftsTable.php
+- [x] Test the admin panel to confirm the error is resolved
