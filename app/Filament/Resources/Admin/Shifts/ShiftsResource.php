@@ -54,7 +54,7 @@ class ShiftsResource extends Resource
     {
         return $table
             ->columns([
-                Columns\TextColumn::make('nama_shift')
+                Columns\TextColumn::make('name')
                     ->label('Nama Shift')
                     ->searchable()
                     ->sortable(),
