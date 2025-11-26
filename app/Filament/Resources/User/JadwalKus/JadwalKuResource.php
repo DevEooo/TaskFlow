@@ -3,11 +3,9 @@
 namespace App\Filament\Resources\User\JadwalKus;
 
 use App\Filament\Resources\User\JadwalKus\Pages\ListJadwalKus;
-use App\Filament\Resources\User\JadwalKus\Schemas\JadwalKuForm;
 use App\Models\JadwalShift;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;

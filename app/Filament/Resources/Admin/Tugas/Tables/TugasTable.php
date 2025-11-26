@@ -2,10 +2,7 @@
 
 namespace App\Filament\Resources\Admin\Tugas\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns;
 use Filament\Tables\Table;
 
 class TugasTable
@@ -14,25 +11,45 @@ class TugasTable
     {
         return $table
             ->columns([
-                TextColumn::make('created_at')
-                    ->dateTime()
+                Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Tugas')
+                    ->date('d M Y')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->alignment('center'),
+
+                Columns\TextColumn::make('user.name') 
+                    ->label('Petugas')
+                    ->searchable()
+                    ->sortable(),
+
+                // ⭐ BARU: Menampilkan Judul Tugas
+                Columns\TextColumn::make('title')
+                    ->label('Judul Tugas')
+                    ->searchable()
+                    ->sortable(),
+
+                Columns\TextColumn::make('shift.name') 
+                    ->label('Shift')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->placeholder('-'),
+
+                // ⭐ BARU: Menampilkan Nama Pemberi Tugas (Dari hook Model)
+                Columns\TextColumn::make('assigner.name') 
+                    ->label('Pemberi Tugas')
+                    ->sortable()
+                    ->placeholder('System'),
+
+                Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state) => match ($state) {
+                        'Pending' => 'warning',
+                        'In Progress' => 'info',
+                        'Complete' => 'success',
+                        default => 'gray',
+                    })
+                    ->sortable(),
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('created_at', 'desc');
     }
 }

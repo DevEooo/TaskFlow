@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\User\ListTugas\Schemas;
+namespace App\Filament\Resources\User\TugasKus\Schemas;
 
 use Filament\Schemas\Schema;
 
-class ListTugasForm
+class TugasKuForm
 {
     public static function configure(Schema $schema): Schema
     {
