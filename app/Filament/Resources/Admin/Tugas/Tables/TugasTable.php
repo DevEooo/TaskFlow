@@ -39,15 +39,17 @@ class TugasTable
 
                 Columns\ImageColumn::make('photo_before_path')
                     ->label('Bukti Sebelum')
-                    ->size(40)
+                    ->size(50)
                     ->placeholder('Tidak ada')
+                    ->getStateUsing(fn ($record) => $record->photo_before_path ? asset('storage/' . ltrim($record->photo_before_path, '/')) : null)
                     ->url(fn ($record) => $record->photo_before_path ? asset('storage/' . ltrim($record->photo_before_path, '/')) : null)
                     ->openUrlInNewTab(),
 
                 Columns\ImageColumn::make('photo_after_path')
                     ->label('Bukti Sesudah')
-                    ->size(40)
+                    ->size(50)
                     ->placeholder('Tidak ada')
+                    ->getStateUsing(fn ($record) => $record->photo_after_path ? asset('storage/' . ltrim($record->photo_after_path, '/')) : null)
                     ->url(fn ($record) => asset('storage/' . ltrim($record->photo_after_path, '/'))) // Menjadikan gambar bisa diklik/diunduh
                     ->openUrlInNewTab(),
 
