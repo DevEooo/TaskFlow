@@ -25,11 +25,11 @@ class EditTugasKu extends EditRecord
     {
         // Cek jika foto after sudah di-upload (mandatori)
         if ($data['photo_after_path']) {
-            $data['status'] = 'Selesai';
+            $data['status'] = 'Complete';
             $data['completed_at'] = Carbon::now();
-        } 
+        }
         // Jika tidak ada foto after, status tetap, dan Filament akan memicu error required field
-        
+
         return $data;
     }
 

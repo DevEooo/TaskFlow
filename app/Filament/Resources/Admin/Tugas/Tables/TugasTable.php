@@ -22,7 +22,6 @@ class TugasTable
                     ->searchable()
                     ->sortable(),
 
-                // ⭐ BARU: Menampilkan Judul Tugas
                 Columns\TextColumn::make('title')
                     ->label('Judul Tugas')
                     ->searchable()
@@ -33,11 +32,24 @@ class TugasTable
                     ->sortable()
                     ->placeholder('-'),
 
-                // ⭐ BARU: Menampilkan Nama Pemberi Tugas (Dari hook Model)
                 Columns\TextColumn::make('assigner.name') 
                     ->label('Pemberi Tugas')
                     ->sortable()
                     ->placeholder('System'),
+
+                Columns\ImageColumn::make('photo_before_path')
+                    ->label('Bukti Sebelum')
+                    ->size(40)
+                    ->placeholder('Tidak ada')
+                    ->url(fn ($record) => $record->photo_before_path ? asset('storage/' . ltrim($record->photo_before_path, '/')) : null)
+                    ->openUrlInNewTab(),
+
+                Columns\ImageColumn::make('photo_after_path')
+                    ->label('Bukti Sesudah')
+                    ->size(40)
+                    ->placeholder('Tidak ada')
+                    ->url(fn ($record) => asset('storage/' . ltrim($record->photo_after_path, '/'))) // Menjadikan gambar bisa diklik/diunduh
+                    ->openUrlInNewTab(),
 
                 Columns\TextColumn::make('status')
                     ->label('Status')
