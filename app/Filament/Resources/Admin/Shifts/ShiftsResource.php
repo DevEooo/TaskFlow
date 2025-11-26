@@ -31,7 +31,7 @@ class ShiftsResource extends Resource
     {
         return $schema
             ->schema([
-                Components\TextInput::make('nama_shift')
+                Components\TextInput::make('name')
                     ->label('Nama Shift (contoh: Pagi)')
                     ->required()
                     ->maxLength(255)
