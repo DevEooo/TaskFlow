@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Admin\Tugas\Schemas;
 
 use App\Models\Shift;
-use App\Models\User;
 use Filament\Forms\Components;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;

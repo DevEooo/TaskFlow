@@ -4,6 +4,7 @@ namespace App\Filament\Resources\User\TugasKus;
 
 use App\Filament\Resources\User\TugasKus\Pages\EditTugasKu;
 use App\Filament\Resources\User\TugasKus\Pages\ListTugasKus;
+use App\Filament\Resources\User\TugasKus\Schemas\TugasKuForm;
 use App\Models\Tugas;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns;
@@ -30,10 +31,7 @@ class TugasKuResource extends Resource
     }
     public static function form(Schema $schema): Schema
     {
-        // Form ini akan digunakan untuk 'Edit' (menyelesaikan tugas)
-        return $schema->schema([
-            // ... Form untuk menyelesaikan tugas (akan kita buat nanti)
-        ]);
+        return TugasKuForm::configure($schema);
     }
 
     // Global Scope: Filter hanya tugas milik user yang login
