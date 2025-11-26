@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 use Filament\Actions\EditAction;
+use Filament\Tables\Filters\SelectFilter;
 
 class TugasKuResource extends Resource
 {
@@ -86,6 +87,17 @@ class TugasKuResource extends Resource
                     ->dateTime('d M Y H:i')
                     ->placeholder('-'),
             ])
+            ->filters([
+                // ⭐ BARU: Filter Berdasarkan Status (Lebih efektif dari Log)
+                SelectFilter::make('status')
+                    ->options([
+                        'Pending' => 'Pending',
+                        'In Progress' => 'In Progress',
+                        'Complete' => 'Complete',
+                    ])
+                    ->label('Filter Status Tugas')
+            ])
+            ->defaultSort('created_at', 'desc')
             ->actions([
                 EditAction::make()
                     ->label('Ambil / Selesaikan Tugas'),

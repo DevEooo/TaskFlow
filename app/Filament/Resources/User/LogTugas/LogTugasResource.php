@@ -22,6 +22,11 @@ class LogTugasResource extends Resource
     protected static ?string $label = "Log Tugas / Aktivitas";
     protected static string | UnitEnum | null $navigationGroup = 'History';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
+    public static function canView($record): bool
+    {
+        return $record->tugas && $record->tugas->user_id === auth()->id();
+    }
+
     public static function table(Table $table): Table
     {
         return LogTugasTable::configure($table);

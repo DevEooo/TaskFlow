@@ -1,4 +1,4 @@
-<? 
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('log_tugas', function (Blueprint $table) {
             $table->id();
             
-            // Kunci Asing ke Tugas mana log ini terkait
+            // FK ke Tugas mana log ini terkait
             $table->foreignId('tugas_id')
                   ->constrained('tugas') 
                   ->cascadeOnDelete();
                   
-            // Kunci Asing ke User yang melakukan aksi (dalam hal ini, user yang ditugaskan)
+            // FK ke User yang melakukan aksi (dalam hal ini, user yang ditugaskan)
             $table->foreignId('user_id') 
                   ->constrained('users')
                   ->cascadeOnDelete();

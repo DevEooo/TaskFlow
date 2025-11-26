@@ -2,19 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\PenempatanEnum;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LogTugas extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
-        'location',
-        'photo_before_path',
-        'photo_after_path',
+        'tugas_id',
+        'user_id',
+        'action',
+        'details',
     ];
 
-    protected $casts = [
-        'location' => PenempatanEnum::class,
-    ];
+    public function tugas(): BelongsTo
+    {
+        return $this->belongsTo(Tugas::class);
+    }
+    
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
