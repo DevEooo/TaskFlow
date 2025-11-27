@@ -1,3 +1,4 @@
-# TODO: Add Filter Feature to TugasKu User Panel
+# Task: Modify AccountWidget to full width in both Admin and User panels
 
-- [x] Add SelectFilter for status in TugasKuResource.php table
+- [ ] Edit AdminPanelProvider.php to set AccountWidget columnSpan(2)
+- [ ] Edit UserPanelProvider.php to set AccountWidget columnSpan(2)
