@@ -21,8 +21,11 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction; 
 use Filament\Tables\Columns; 
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms;
 use Filament\Forms\Form;
+use App\Filament\Resources\Admin\Absensis\Schemas\AbsensiForm as AbsensiFormSchema;
 use Filament\Tables\Actions;
 use Filament\Tables\Columns\TextColumn;
 
@@ -33,6 +36,11 @@ class AbsensiResource extends Resource
     protected static ?string $label = "Daftar Absensi";
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
+    public static function form(Schema $schema): Schema
+    {
+        return AbsensiFormSchema::configure($schema);
+    }
 
     public static function table(Table $table): Table
     {
@@ -45,11 +53,12 @@ class AbsensiResource extends Resource
                     ->sortable()
                     ->weight('bold'),
 
-                // 2. Shift (Jika diimplementasikan)
+                // 2. Shift
                 TextColumn::make('shift.name')
                     ->label('Shift')
                     ->badge()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->placeholder('Tidak ada shift'),
 
                 // 3. Waktu Check In
                 TextColumn::make('check_in')
@@ -71,10 +80,13 @@ class AbsensiResource extends Resource
                         'late' => 'danger',
                         default => 'warning',
                     }),
-                    
-                // 🛑 KOLOM BUKTI FOTO DIHILANGKAN UNTUK KESEDERHANAAN
-                // Hapus atau Komentar baris ini jika sebelumnya ada:
-                // Tables\Columns\ImageColumn::make('photo_path')->label('Bukti')
+
+                // 6. INDICATOR TELAT
+                TextColumn::make('is_late')
+                    ->label('Telat')
+                    ->badge()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Terlambat' : 'Tepat Waktu')
+                    ->color(fn (bool $state): string => $state ? 'danger' : 'success'),
                 
             ])
             ->defaultSort('created_at', 'desc')

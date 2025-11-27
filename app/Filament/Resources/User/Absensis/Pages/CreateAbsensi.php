@@ -4,6 +4,7 @@ namespace App\Filament\Resources\User\Absensis\Pages;
 
 use App\Filament\Resources\User\Absensis\AbsensiResource;
 use App\Models\Absensi;
+use App\Models\JadwalShift;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -47,10 +48,33 @@ class CreateAbsensi extends CreateRecord
             }
 
             // Jika belum, simpan data baru
-            $data['check_in'] = now(); // Set waktu otomatis server
+            $checkInTime = now(); // Set waktu otomatis server
+            $data['check_in'] = $checkInTime;
             $data['user_id'] = $user->id;
-            $data['status'] = 'in_progress'; // Set status sedang bekerja
-            
+
+            // Set shift_id berdasarkan jadwal shift hari ini
+            $jadwalShift = JadwalShift::where('user_id', $user->id)
+                ->where('date', today())
+                ->with('shift')
+                ->first();
+
+            // Tentukan status berdasarkan waktu check-in vs waktu mulai shift
+            if ($jadwalShift && $jadwalShift->shift) {
+                $data['shift_id'] = $jadwalShift->shift_id;
+                $shiftStartTime = today()->setTimeFromTimeString($jadwalShift->shift->start_time);
+                if ($checkInTime->greaterThan($shiftStartTime)) {
+                    $data['status'] = 'late';
+                    $data['is_late'] = true;
+                } else {
+                    $data['status'] = 'on_time';
+                    $data['is_late'] = false;
+                }
+            } else {
+                // Jika tidak ada jadwal shift, gunakan default on_time
+                $data['status'] = 'on_time';
+                $data['is_late'] = false;
+            }
+
             return static::getModel()::create($data);
         }
 
@@ -58,12 +82,12 @@ class CreateAbsensi extends CreateRecord
         // SKENARIO 2: CHECK OUT
         // ---------------------------------------------------------
         if ($statusInput === 'check_out') {
-            // Cari data check-in hari ini milik user yang statusnya masih 'in_progress'
+            // Cari data check-in hari ini milik user yang belum check-out (check_out masih null)
             $absensi = Absensi::where('user_id', $user->id)
                 ->whereDay('created_at', now()->day)
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
-                ->where('status', 'in_progress') // Hanya ambil yang sedang in_progress
+                ->whereNull('check_out') // Cari yang belum check-out
                 ->first();
 
             if (! $absensi) {
@@ -77,9 +101,28 @@ class CreateAbsensi extends CreateRecord
                 $this->halt();
             }
 
+            // Cek jadwal shift untuk validasi waktu check-out
+            $jadwalShift = JadwalShift::where('user_id', $user->id)
+                ->where('date', today())
+                ->with('shift')
+                ->first();
+
+            $currentTime = now();
+            if ($jadwalShift && $jadwalShift->shift) {
+                $shiftEndTime = today()->setTimeFromTimeString($jadwalShift->shift->end_time);
+                if ($currentTime->lessThan($shiftEndTime)) {
+                    // Notifikasi peringatan jika check-out sebelum waktu shift berakhir
+                    Notification::make()
+                        ->warning()
+                        ->title('Peringatan Check Out Dini')
+                        ->body("Anda check-out sebelum waktu shift berakhir ({$jadwalShift->shift->end_time}). Pastikan Anda telah menyelesaikan tugas dengan baik.")
+                        ->send();
+                }
+            }
+
             // Update data yang sudah ada
             $absensi->update([
-                'check_out' => now(), // Set waktu pulang
+                'check_out' => $currentTime, // Set waktu pulang
                 'status' => 'done',   // Tandai selesai
                 'report_notes' => $data['notes'] ?? $absensi->report_notes, // Catatan bisa diperbarui
             ]);
