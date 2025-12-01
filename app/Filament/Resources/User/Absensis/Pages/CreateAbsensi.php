@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\User\Absensis\Pages;
 
-use App\Filament\Resources\User\Absensis\AbsensiResource;
+use App\Filament\Resources\User\Absensis\UserAbsensiResource;
 use App\Models\Absensi;
 use App\Models\JadwalShift;
 use Filament\Notifications\Notification;
@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class CreateAbsensi extends CreateRecord
 {
-    protected static string $resource = AbsensiResource::class;
+    protected static string $resource = UserAbsensiResource::class;
 
     // Kita modifikasi judul halamannya
     protected ?string $heading = 'Form Absensi Harian';

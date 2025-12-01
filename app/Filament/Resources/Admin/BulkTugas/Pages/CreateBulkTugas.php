@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Admin\BulkTugas\Pages;
 
-use App\Filament\Resources\Admin\BulkTugas\BulkTugasResource;
+use App\Filament\Resources\Admin\BulkTugasResource;
 use App\Models\Tugas;
+use App\Models\JadwalShift;  
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -20,29 +21,42 @@ class CreateBulkTugas extends CreateRecord
         $endDate = Carbon::parse($data['end_date']);
         $assignedById = Auth::id();
         $tasksCreatedCount = 0;
-
-        // Loop melalui setiap tanggal dalam rentang
-        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-            $task = Tugas::create([
-                'user_id' => $data['user_id'],
-                'shift_id' => $data['shift_id'] ?? null,
+        $scheduleCreatedCount = 0;
+        
+        $userId = $data['user_id'];
+        $shiftId = $data['shift_id'] ?? null;
+        
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            Tugas::create([
+                'user_id' => $userId,
+                'shift_id' => $shiftId,
                 'location' => $data['location'],
                 'title' => $data['title'],
                 'task_description' => $data['task_description'],
                 'status' => 'Pending',
                 'assigned_by_id' => $assignedById,
+                
                 'created_at' => $date, 
-                'updated_at' => $date,
             ]);
             $tasksCreatedCount++;
+
+            if ($shiftId) {
+                JadwalShift::create([
+                    'user_id' => $userId,
+                    'shift_id' => $shiftId,
+                    'date' => $date->toDateString(),
+                    'assigned_by_id' => $assignedById,
+                ]);
+                $scheduleCreatedCount++;
+            }
             
-            // ⭐ LOGIC NOTIFIKASI TUGAS BARU (Lihat Bagian 4)
-            // SendNotification::dispatch($task); 
+            // ⭐ LOGIC NOTIFIKASI TUGAS BARU (dapat dipicu di sini)
+            // Asumsi: Kita kirim notifikasi bahwa ada tugas baru untuk tanggal ini.
         }
 
         Notification::make()
-            ->title("Penugasan Berhasil!")
-            ->body("{$tasksCreatedCount} tugas harian telah dibuat untuk periode {$startDate->format('d/m/Y')} hingga {$endDate->format('d/m/Y')}.")
+            ->title("Penugasan Bulk Berhasil!")
+            ->body("{$tasksCreatedCount} tugas harian dan {$scheduleCreatedCount} jadwal shift telah dibuat untuk periode {$startDate->format('d/m/Y')} hingga {$endDate->format('d/m/Y')}.")
             ->success()
             ->send();
 
@@ -51,12 +65,16 @@ class CreateBulkTugas extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        // Redirect kembali ke halaman Create setelah sukses
         return $this->getResource()::getUrl('create');
     }
     
+    
     protected function getFormActions(): array 
     {
-        return array_slice(parent::getFormActions(), 0, 1); // Hanya tampilkan Create
+        $actions = parent::getFormActions();
+        if (isset($actions['create'])) {
+            $actions['create']->label('Buat Tugas & Jadwal Bulk');
+        }
+        return $actions;
     }
 }

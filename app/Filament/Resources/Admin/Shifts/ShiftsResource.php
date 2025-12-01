@@ -21,7 +21,7 @@ use UnitEnum;
 class ShiftsResource extends Resource
 {
     protected static ?string $model = Shift::class;
-    protected static ?string $navigationLabel = 'Atur Shift Kerja';
+    protected static ?string $navigationLabel = 'Buat dan Atur Shift';
     protected static ?string $slug = "atur-shift-kerja";
     protected static ?string $label = "Atur Shift Kerja";
     protected static string | UnitEnum | null $navigationGroup = 'Kelola Shift';
@@ -35,11 +35,11 @@ class ShiftsResource extends Resource
                     ->label('Nama Shift (contoh: Pagi)')
                     ->required()
                     ->maxLength(255)
-                    ->unique(ignoreRecord: true), // Nama harus unik
+                    ->unique(ignoreRecord: true),  
                 
                 Components\TimePicker::make('start_time')
                     ->label('Jam Mulai')
-                    ->seconds(false) // Abaikan detik
+                    ->seconds(false)  
                     ->required(),
 
                 Components\TimePicker::make('end_time')
@@ -49,7 +49,6 @@ class ShiftsResource extends Resource
             ])->columns(2);
     }
 
-    // Tabel untuk melihat daftar shift
     public static function table(Table $table): Table
     {
         return $table
@@ -61,7 +60,7 @@ class ShiftsResource extends Resource
                 
                 Columns\TextColumn::make('start_time')
                     ->label('Jam Mulai')
-                    ->time('H:i') // Format jam 24 jam
+                    ->time('H:i')  
                     ->sortable(),
                     
                 Columns\TextColumn::make('end_time')
