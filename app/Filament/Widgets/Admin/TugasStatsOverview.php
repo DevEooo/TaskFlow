@@ -47,6 +47,5 @@ class TugasStatsOverview extends BaseWidget
         ];
     }
     
-    // Opsional: Refresh otomatis setiap 5 detik
     // protected static ?string $pollingInterval = '7s';
 }
