@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Admin\Tugas\Tables;
 
 use Filament\Tables\Columns;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\SelectFilter;
 
 class TugasTable
 {
@@ -63,6 +64,16 @@ class TugasTable
                         default => 'gray',
                     })
                     ->sortable(),
+                    
+            ])
+            ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'Pending' => 'Pending',
+                        'In Progress' => 'In Progress',
+                        'Complete' => 'Complete',
+                    ])
+                    ->label('Filter Status Tugas')
             ])
             ->defaultSort('created_at', 'desc');
     }

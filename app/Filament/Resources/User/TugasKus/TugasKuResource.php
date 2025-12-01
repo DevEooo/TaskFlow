@@ -88,7 +88,6 @@ class TugasKuResource extends Resource
                     ->placeholder('-'),
             ])
             ->filters([
-                // ⭐ BARU: Filter Berdasarkan Status (Lebih efektif dari Log)
                 SelectFilter::make('status')
                     ->options([
                         'Pending' => 'Pending',
@@ -107,7 +106,6 @@ class TugasKuResource extends Resource
     {
         return [
             'index' => ListTugasKus::route('/'),
-            // Edit page ini untuk proses penyelesaian tugas
             'edit' => EditTugasKu::route('/{record}/edit'),
         ];
     }

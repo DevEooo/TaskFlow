@@ -2,11 +2,7 @@
 
 namespace App\Filament\Resources\Admin\JadwalShifts;
 
-use App\Filament\Resources\Admin\JadwalShifts\Pages\CreateJadwalShift;
-use App\Filament\Resources\Admin\JadwalShifts\Pages\EditJadwalShift;
-use App\Filament\Resources\Admin\JadwalShifts\Pages\ListJadwalShifts;
-use App\Filament\Resources\Admin\JadwalShifts\Schemas\JadwalShiftForm;
-use App\Filament\Resources\Admin\JadwalShifts\Tables\JadwalShiftsTable;
+use Filament\Tables\Filters\SelectFilter;
 use App\Models\JadwalShift;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -52,10 +48,10 @@ class JadwalShiftResource extends Resource
                     
                 Components\DatePicker::make('date')
                     ->label('Tanggal Shift')
-                    ->minDate(now()->subMonth()) // Batasi minimal sebulan ke belakang
+                    ->minDate(now()->subMonth())
                     ->required()
                     ->unique(ignoreRecord: true, modifyRuleUsing: function (Unique $rule, Get $get) {
-                        return $rule->where('user_id', $get('user_id')); // Unique per user per date
+                        return $rule->where('user_id', $get('user_id')); 
                     }),
             ])->columns(3);
     }
@@ -87,6 +83,11 @@ class JadwalShiftResource extends Resource
                     ->label('Jam Selesai')
                     ->time('H:i'),
             ])
+            ->filters([
+                SelectFilter::make('shift_id')
+                    ->relationship('shift', 'name')
+                    ->label('Filter Jadwal Shift')
+            ])
             ->defaultSort('date', 'desc');
     }
 
@@ -94,7 +95,6 @@ class JadwalShiftResource extends Resource
     {
         return [
             'index' => Pages\ListJadwalShifts::route('/'),
-            'create' => Pages\CreateJadwalShift::route('/create'),
             'edit' => Pages\EditJadwalShift::route('/{record}/edit'),
         ];
     }

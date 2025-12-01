@@ -74,7 +74,7 @@ class AbsensiResource extends Resource
     {
         return [
             // Hapus 'index' dan 'edit'. Route 'create' kita set sebagai root.
-             'index' => ListAbsensis::route('/'),
+            'index' => ListAbsensis::route('/'),
             'create' => CreateAbsensi::route('/create'),
         ];
     }
@@ -82,7 +82,7 @@ class AbsensiResource extends Resource
     public static function canViewAny(): bool
     {
         return true;
-    } // Tetap true agar link muncul
+    } 
     public static function canEdit(Model $record): bool
     {
         return false;
