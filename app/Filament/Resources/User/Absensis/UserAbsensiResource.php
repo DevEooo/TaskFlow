@@ -13,7 +13,8 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components;
 use Filament\Schemas\Components\Section;
-use Carbon\Carbon; // Tambahkan import Carbon untuk manipulasi tanggal
+use Carbon\Carbon;
+use Filament\Schemas\Components\Utilities\Get;
 
 class UserAbsensiResource extends Resource
 {
@@ -26,11 +27,32 @@ class UserAbsensiResource extends Resource
     // 1. Metode getUrl (Dipertahankan agar redirect ke 'create')
     public static function getUrl(string|null $name = null, array $parameters = [], bool $isAbsolute = true, string|null $panel = null, Model|null $tenant = null, bool $shouldGuessMissingParameters = false): string
     {
-        // Kita memaksa semua akses mengarah ke route 'create'
         if ($name === 'index') {
             return parent::getUrl('create', $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
         }
         return parent::getUrl($name, $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
+    }
+
+    // Fungsi helper untuk mendapatkan status absensi (digunakan di berbagai closure)
+    public static function getTodayAbsensiStatus(): array
+    {
+        $userId = auth()->id();
+        if (!$userId) {
+            return ['status' => 'unauthenticated', 'absensi' => null];
+        }
+
+        $today = Carbon::today()->toDateString();
+        $absensi = Absensi::where('user_id', $userId)
+            ->where(fn ($query) => $query->whereDate('check_in', $today)->orWhereDate('check_out', $today))
+            ->first();
+
+        if (!$absensi) {
+            return ['status' => 'pending_in', 'absensi' => null];
+        }
+        if ($absensi->check_out) {
+            return ['status' => 'done', 'absensi' => $absensi];
+        }
+        return ['status' => 'pending_out', 'absensi' => $absensi];
     }
 
     // 2. Metode Form: Ditambahkan Section Status Dinamis
@@ -42,108 +64,100 @@ class UserAbsensiResource extends Resource
                 ->schema([
                     Components\Placeholder::make('status_text')
                         ->label('') 
-                        // ⭐ LOGIKA DINAMIS DIISOLASI DALAM CLOSURE INI
                         ->content(function () {
-                            $userId = auth()->id();
-                            
-                            // Cek keamanan jika Auth belum siap (mencegah Resource hilang)
-                            if (!$userId) {
-                                return 'Memuat status kehadiran...';
-                            }
+                            $data = self::getTodayAbsensiStatus();
+                            $absensi = $data['absensi'];
 
-                            $today = Carbon::today()->toDateString();
-                            
-                            // Query data absensi hari ini (menggunakan 'check_in' dan 'check_out' sesuai CreateAbsensi.php)
-                            $currentAbsensi = Absensi::where('user_id', $userId)
-                                ->where(function ($query) use ($today) {
-                                    // Cek berdasarkan tanggal check_in atau check_out
-                                    $query->whereDate('check_in', $today) 
-                                          ->orWhereDate('check_out', $today);
-                                })
-                                ->first();
-
-                            $statusMessage = 'Anda belum Check-in hari ini.';
-                            
-                            if ($currentAbsensi) {
-                                $checkInTime = $currentAbsensi->check_in 
-                                    ? Carbon::parse($currentAbsensi->check_in)->format('H:i') 
-                                    : '-';
-                                
-                                if ($currentAbsensi->check_out) {
-                                    $checkOutTime = Carbon::parse($currentAbsensi->check_out)->format('H:i');
-                                    $statusMessage = "Status: Selesai (Check-in: {$checkInTime}, Check-out: {$checkOutTime})";
-                                } else {
-                                    $statusMessage = "Status: Sedang Bekerja (Check-in: {$checkInTime})";
-                                }
+                            switch ($data['status']) {
+                                case 'done':
+                                    $checkIn = Carbon::parse($absensi->check_in)->format('H:i');
+                                    $checkOut = Carbon::parse($absensi->check_out)->format('H:i');
+                                    return "Status: Selesai (Check-in: {$checkIn}, Check-out: {$checkOut}). Tidak ada aksi yang diperlukan.";
+                                case 'pending_out':
+                                    $checkIn = Carbon::parse($absensi->check_in)->format('H:i');
+                                    return "Status: Sedang Bekerja (Check-in: {$checkIn}). Anda harus Check Out untuk menyelesaikan hari.";
+                                case 'pending_in':
+                                default:
+                                    return 'Anda belum Check-in hari ini. Silakan Check In.';
                             }
-                            
-                            return $statusMessage;
                         })
-                        // Logika warna dipindahkan ke extraAttributes closure
-                        ->extraAttributes(function (Components\Placeholder $component) {
-                            $status = 'warning'; 
-                            
-                            $userId = auth()->id();
-                            if ($userId) {
-                                $today = Carbon::today()->toDateString();
-                                $currentAbsensi = Absensi::where('user_id', $userId)
-                                    ->where(function ($query) use ($today) {
-                                        $query->whereDate('check_in', $today)
-                                              ->orWhereDate('check_out', $today);
-                                    })
-                                    ->first();
-                                
-                                if ($currentAbsensi) {
-                                    $status = $currentAbsensi->check_out ? 'success' : 'info';
-                                }
-                            }
+                        ->extraAttributes(function () {
+                            $status = self::getTodayAbsensiStatus()['status'];
+                            $color = match ($status) {
+                                'done' => 'success',
+                                'pending_out' => 'info',
+                                default => 'warning',
+                            };
 
                             return [
-                                'class' => "p-4 rounded-lg text-lg font-bold text-{$status}-600 bg-{$status}-50 border border-{$status}-200",
+                                'class' => "p-4 rounded-lg text-lg font-bold text-{$color}-600 bg-{$color}-50 border border-{$color}-200",
                             ];
                         }),
                 ])->columns(1), 
             // --- END OF SECTION STATUS ---
 
 
+            // --- SECTION INPUT KEHADIRAN (DYNAMIC VISIBILITY & OPTIONS) ---
             Section::make('Input Kehadiran')
+                ->hidden(fn () => self::getTodayAbsensiStatus()['status'] === 'done')
                 ->schema([
-                    // FIELD KRUSIAL: STATUS (Untuk Check-in/Check-out)
                     Components\Radio::make('status')
                         ->label('Tipe Absensi')
-                        ->options([
-                            'check_in' => 'Check In (Masuk)',
-                            'check_out' => 'Check Out (Pulang)',
-                        ])
-                        ->required()
-                        ->inline(), // Tampilkan dalam satu baris
+                        ->live() // Aktifkan live mode untuk mengubah helper text
+                        ->options(function () {
+                            $status = self::getTodayAbsensiStatus()['status'];
+                            $options = [
+                                'check_in' => 'Check In (Masuk)',
+                                'check_out' => 'Check Out (Pulang)',
+                            ];
 
-                    // Catatan Harian (Diperlukan untuk laporan)
+                            if ($status === 'pending_out') {
+                                unset($options['check_in']);
+                            } elseif ($status === 'pending_in') {
+                                unset($options['check_out']);
+                            }
+                            return $options;
+                        })
+                        ->default(function () {
+                            $status = self::getTodayAbsensiStatus()['status'];
+                            if ($status === 'pending_out') {
+                                return 'check_out';
+                            } elseif ($status === 'pending_in') {
+                                return 'check_in';
+                            }
+                            return null;
+                        })
+                        ->required()
+                        ->inline(),
+
                     Components\Textarea::make('notes')
                         ->label('Catatan/Keterangan')
                         ->rows(2)
-                        ->helperText('Diisi saat Check In (misalnya: agenda hari ini) atau Check Out (misalnya: hasil kerja hari ini).')
+                        ->helperText(function (Get $get) {
+                            $status = $get('status');
+                            if ($status === 'check_in') {
+                                return 'Tuliskan rencana/agenda kerja utama Anda hari ini (misalnya: meeting klien, menyelesaikan laporan X).';
+                            } elseif ($status === 'check_out') {
+                                return 'Tuliskan ringkasan hasil kerja/pencapaian utama Anda hari ini.';
+                            }
+                            return 'Diisi saat Check In atau Check Out.';
+                        })
                         ->columnSpanFull(),
-                ])->columns(1), // Semua field tampil dalam satu kolom
+                ])->columns(1),
         ]);
-
     }
 
-    // 3. Metode Table: Wajib ada, tapi dikosongkan
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([]); // Kosongkan kolom agar tidak menampilkan data
+            ->columns([]);  
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
-    // 4. Metode Pages: Dipertahankan
     public static function getPages(): array
     {
         return [
@@ -152,10 +166,9 @@ class UserAbsensiResource extends Resource
         ];
     }
 
-    // Matikan kemampuan untuk View dan Edit agar user tidak bisa memanipulasi data yang sudah masuk
     public static function canViewAny(): bool
     {
-        return true; // Tetap true agar link muncul
+        return true; 
     } 
     public static function canEdit(Model $record): bool
     {

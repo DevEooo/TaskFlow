@@ -8,7 +8,6 @@ use App\Models\JadwalShift;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\ValidationException;
 
 class CreateAbsensi extends CreateRecord
 {
@@ -21,13 +20,13 @@ class CreateAbsensi extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $user = auth()->user();
-        $statusInput = $data['status'];  
+        $statusInput = $data['status'];
 
         if ($statusInput === 'check_in') {
             $existingCheckIn = Absensi::where('user_id', $user->id)
-                ->whereDay('created_at', now()->day)  
-                ->whereMonth('created_at', now()->month)  
-                ->whereYear('created_at', now()->year)  
+                ->whereDay('created_at', now()->day)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
                 ->exists();
 
             if ($existingCheckIn) {
@@ -36,11 +35,11 @@ class CreateAbsensi extends CreateRecord
                     ->title('Gagal Check In')
                     ->body('Anda sudah melakukan Check In hari ini! Tidak dapat Check In dua kali.')
                     ->send();
-                
-                $this->halt();  
+
+                $this->halt();
             }
 
-            $checkInTime = now(); 
+            $checkInTime = now();
             $data['check_in'] = $checkInTime;
             $data['user_id'] = $user->id;
 
@@ -72,11 +71,11 @@ class CreateAbsensi extends CreateRecord
                 ->whereDay('created_at', now()->day)
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
-                ->whereNull('check_out') // Cari yang belum check-out
+                ->whereNull('check_out')  
                 ->first();
 
-            if (! $absensi) {
-               
+            if (!$absensi) {
+
                 Notification::make()
                     ->danger()
                     ->title('Gagal Check Out')
@@ -86,7 +85,6 @@ class CreateAbsensi extends CreateRecord
                 $this->halt();
             }
 
-             
             $jadwalShift = JadwalShift::where('user_id', $user->id)
                 ->where('date', today())
                 ->with('shift')
@@ -96,7 +94,7 @@ class CreateAbsensi extends CreateRecord
             if ($jadwalShift && $jadwalShift->shift) {
                 $shiftEndTime = today()->setTimeFromTimeString($jadwalShift->shift->end_time);
                 if ($currentTime->lessThan($shiftEndTime)) {
-                     
+
                     Notification::make()
                         ->warning()
                         ->title('Peringatan Check Out Dini')
@@ -105,11 +103,11 @@ class CreateAbsensi extends CreateRecord
                 }
             }
 
-            
+
             $absensi->update([
-                'check_out' => $currentTime,  
-                'status' => 'done',    
-                'report_notes' => $data['notes'] ?? $absensi->report_notes, 
+                'check_out' => $currentTime,
+                'status' => 'done',
+                'report_notes' => $data['notes'] ?? $absensi->report_notes,
             ]);
 
             return $absensi;
@@ -117,11 +115,28 @@ class CreateAbsensi extends CreateRecord
 
         return parent::handleRecordCreation($data);
     }
+    protected function getFormActions(): array
+    {
+        $status = UserAbsensiResource::getTodayAbsensiStatus()['status'];
 
-     
+        if ($status === 'done') {
+            return []; // Hide action buttons when attendance is done
+        }
+
+        $actionLabel = match ($status) {
+            'pending_out' => 'Check Out Sekarang',
+            'pending_in' => 'Check In Sekarang',
+            default => 'Kirim Data',
+        };
+
+        return [
+            $this->getCreateFormAction()->label($actionLabel),
+            $this->getCancelFormAction(),
+        ];
+    }
     protected function getCreatedNotification(): ?Notification
     {
-         
+
         $status = $this->data['status'] ?? 'unknown';
 
         $title = ($status === 'check_in') ? 'Check In Berhasil!' : 'Check Out Berhasil!';
@@ -132,7 +147,7 @@ class CreateAbsensi extends CreateRecord
             ->title($title)
             ->body($body);
     }
-    
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('create');
