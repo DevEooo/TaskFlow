@@ -25,6 +25,8 @@ class UserPanelProvider extends PanelProvider
             ->default(false)
             ->id('user')
             ->path('user')
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('5s')
             ->login()
             ->registration()
             ->colors([

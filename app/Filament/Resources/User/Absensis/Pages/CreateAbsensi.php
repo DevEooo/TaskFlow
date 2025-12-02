@@ -71,7 +71,7 @@ class CreateAbsensi extends CreateRecord
                 ->whereDay('created_at', now()->day)
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
-                ->whereNull('check_out')  
+                ->whereNull('check_out')
                 ->first();
 
             if (!$absensi) {
@@ -136,20 +136,43 @@ class CreateAbsensi extends CreateRecord
     }
     protected function getCreatedNotification(): ?Notification
     {
-
         $status = $this->data['status'] ?? 'unknown';
+        $user = auth()->user();
+        $time = now()->format('H:i');
 
-        $title = ($status === 'check_in') ? 'Check In Berhasil!' : 'Check Out Berhasil!';
-        $body = ($status === 'check_in') ? 'Selamat bekerja. Data kehadiran Anda telah tercatat.' : 'Terima kasih atas kerja kerasnya. Data kepulangan telah tercatat.';
+        // Tentukan konten pesan
+        if ($status === 'check_in') {
+            $title = 'Check In Berhasil';
+            $body = "Anda masuk pada pukul {$time}. Selamat bekerja!";
+            $icon = 'heroicon-o-arrow-right-end-on-rectangle';
+            $color = 'success';
+        } else {
+            $title = 'Check Out Berhasil';
+            $body = "Anda pulang pada pukul {$time}. Terima kasih!";
+            $icon = 'heroicon-o-arrow-left-start-on-rectangle';
+            $color = 'info';
+        }
 
-        return Notification::make()
-            ->success()
+        // 1. Buat Objek Notifikasi
+        $notification = Notification::make()
             ->title($title)
-            ->body($body);
-    }
+            ->body($body)
+            ->icon($icon)
+            ->color($color);
 
+        // 2. Kirim Notifikasi Database ke DIRI SENDIRI (Agar muncul di lonceng User)
+        $notification->sendToDatabase($user);
+
+        // 3. (Opsional) Kirim Notifikasi ke SEMUA ADMIN jika Telat
+        // Anda bisa menambahkan logika if($isLate) di sini untuk notifikasi ke Admin
+
+        // 4. Return notifikasi untuk Toast (muncul sesaat di pojok kanan atas)
+        return $notification;
+    }
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('create');
     }
+
+
 }
