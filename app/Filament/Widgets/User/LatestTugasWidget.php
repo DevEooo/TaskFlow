@@ -2,50 +2,66 @@
 
 namespace App\Filament\Widgets\User;
 
-use Filament\Widgets\Widget;
 use App\Models\Tugas;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\Auth;
 
-class LatestTugasWidget extends Widget
+class LatestTugasWidget extends BaseWidget
 {
-    protected string $view = 'filament.widgets.user.latest-tugas-widget'; // Nama view baru
-    protected static ?string $pollingInterval = '60s'; 
     protected int | string | array $columnSpan = 'full';
-    
-    protected function getLatestTaskData(): ?Tugas
+
+    protected function getStats(): array
     {
         $userId = Auth::id();
-        
-        // Ambil tugas aktif terbaru (Pending atau On Progress)
-        return Tugas::where('user_id', $userId)
+        $task = Tugas::where('user_id', $userId)
             ->whereIn('status', ['Pending', 'On Progress'])
             ->orderBy('created_at', 'desc')
             ->first();
-    }
-    
-    // Kirim data ke view
-    protected function getViewData(): array
-    {
-        $task = $this->getLatestTaskData();
-        
+
         if (!$task) {
             return [
-                'task' => null,
-                'statusColor' => 'gray',
-                'statusLabel' => 'Tidak Ada Tugas Aktif',
+                Stat::make('Status Tugas', 'Semua Selesai')
+                    ->description('Kerja bagus! Tidak ada tanggungan saat ini.')
+                    ->descriptionIcon('heroicon-m-face-smile')
+                    ->color('success')
+                    ->chart([7, 2, 10, 3, 15, 4, 17]),
+                
+                 Stat::make('Tugas Baru', 'Buat Sekarang')
+                    ->description('Klik untuk menambah tugas')
+                    ->icon('heroicon-m-plus')
+                    ->url(\App\Filament\Resources\User\TugasKus\TugasKuResource::getUrl('create', panel: 'user'))
+                    ->color('gray'),
             ];
         }
 
-        $statusColor = match($task->status) {
+        $color = match($task->status) {
             'Pending' => 'warning',
             'On Progress' => 'info',
             default => 'gray',
         };
 
+        $editUrl = \App\Filament\Resources\User\TugasKus\TugasKuResource::getUrl('edit', ['record' => $task->id], panel: 'user');
+
         return [
-            'task' => $task,
-            'statusColor' => $statusColor,
-            'statusLabel' => $task->status,
+            Stat::make('Tugas Terbaru', $task->title)
+                ->description('Prioritas utama Anda')
+                ->descriptionIcon('heroicon-m-clipboard-document-check')
+                ->color('primary'),
+
+            Stat::make('Tanggal Dibuat', $task->created_at->translatedFormat('d F Y'))
+                ->description($task->created_at->diffForHumans())
+                ->descriptionIcon('heroicon-m-calendar')
+                ->color('gray'),
+
+            Stat::make('Status', $task->status)
+                ->description('Klik disini untuk selesaikan  →') 
+                ->descriptionIcon('heroicon-m-arrow-right')
+                ->color($color)
+                ->url($editUrl) 
+                ->extraAttributes([
+                    'class' => 'cursor-pointer hover:scale-105 transition-transform', 
+                ]),
         ];
     }
 }
