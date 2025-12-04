@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LatestTugasWidget extends BaseWidget
 {
+    protected static ?int $sort = 20;
     protected int | string | array $columnSpan = 'full';
 
     protected function getStats(): array
