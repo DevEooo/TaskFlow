@@ -1,72 +1,71 @@
 <x-filament-widgets::widget>
-    <!-- Card adalah root tag yang disarankan untuk Widget -->
-    <x-filament::card class="relative overflow-hidden p-6">
-        @if ($task)
-            <div class="flex items-center space-x-4">
+    <div class="grid grid-cols-3 gap-6">
+        <!-- Card 1: Latest Task Title -->
+        <x-filament::card class="p-6 shadow-md dark:shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
                 <x-filament::icon
                     icon="heroicon-o-clipboard-document-check"
-                    class="h-8 w-8 text-primary-500"
+                    class="h-8 w-8 text-primary-600 dark:text-primary-400"
                 />
-                
-                <div class="flex-1">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-0.5">
-                        Tugas Aktif Terbaru
+                <div>
+                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Tugas Terbaru
+                    </p>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                        {{ $task ? $task->title : 'Tidak ada tugas' }}
                     </h3>
-                    <p class="text-xl font-extrabold text-primary-600 dark:text-primary-400">
-                        {{ $task->title }}
-                    </p>
                 </div>
             </div>
+        </x-filament::card>
 
-            <div class="mt-4 pt-3 space-y-2">
-                <!-- Waktu Diberikan -->
-                <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                    <x-filament::icon icon="heroicon-o-calendar" class="h-4 w-4 text-gray-400" />
-                    <span>Ditugaskan: {{ $task->created_at->translatedFormat('l, d F Y') }}</span>
-                </p>
-
-                <!-- Status -->
-                <div class="flex items-center justify-between">
-                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                        <x-filament::icon icon="heroicon-o-clock" class="h-4 w-4 text-gray-500" />
-                        <span>Status Saat Ini</span>
-                    </p>
-                    
-                    <x-filament::badge :color="$statusColor" class="uppercase">
-                        {{ $statusLabel }}
-                    </x-filament::badge>
-                </div>
-                
-                <!-- Deskripsi -->
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 italic border-l-2 border-gray-200 pl-3">
-                    "{{ Str::limit($task->task_description, 100) }}"
-                </p>
-            </div>
-            
-            <!-- Link Aksi -->
-            <div class="mt-4 text-right">
-                <x-filament::link
-                    :href="\App\Filament\Resources\User\TugasKus\TugasKuResource::getUrl('edit', ['record' => $task->id], panel: 'user')"
-                    tag="a"
-                    color="primary"
-                    size="sm"
-                >
-                    Lihat Detail Tugas
-                </x-filament::link>
-            </div>
-            
-        @else
-            <!-- Jika tidak ada tugas aktif -->
-            <div class="text-center py-6">
-                 <x-filament::icon
-                    icon="heroicon-o-check-circle"
-                    class="h-10 w-10 mx-auto text-success-500"
+        <!-- Card 2: Task Creation Date -->
+        <x-filament::card class="p-6 shadow-md dark:shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <x-filament::icon
+                    icon="heroicon-o-calendar"
+                    class="h-8 w-8 text-success-600 dark:text-success-400"
                 />
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mt-3">Semua Tugas Selesai!</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Anda tidak memiliki tugas aktif yang tertunda saat ini.
-                </p>
+                <div>
+                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Tanggal Dibuat
+                    </p>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                        {{ $task ? $task->created_at->translatedFormat('d F Y') : '-' }}
+                    </h3>
+                </div>
             </div>
-        @endif
-    </x-filament::card>
+        </x-filament::card>
+
+        <!-- Card 3: Status and CTA -->
+        <x-filament::card class="p-6 shadow-md dark:shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <x-filament::icon
+                        icon="heroicon-o-check-circle"
+                        class="h-8 w-8 text-warning-600 dark:text-warning-400"
+                    />
+                    <div>
+                        <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Status
+                        </p>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                            {{ $task ? $statusLabel : 'Tidak ada' }}
+                        </h3>
+                    </div>
+                </div>
+                @if($task)
+                    <x-filament::link
+                        :href="\App\Filament\Resources\User\TugasKus\TugasKuResource::getUrl('edit', ['record' => $task->id], panel: 'user')"
+                        tag="a"
+                        color="primary"
+                        size="sm"
+                        class="font-semibold hover:underline"
+                    >
+                        <x-filament::icon icon="heroicon-m-arrow-right" class="h-5 w-5" />
+                        Selesaikan Sekarang
+                    </x-filament::link>
+                @endif
+            </div>
+        </x-filament::card>
+    </div>
 </x-filament-widgets::widget>
