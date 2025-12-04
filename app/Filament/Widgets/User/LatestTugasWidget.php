@@ -56,7 +56,7 @@ class LatestTugasWidget extends BaseWidget
                 ->color('gray'),
 
             Stat::make('Status', $task->status)
-                ->description('Klik disini untuk selesaikan  →') 
+                ->description('Klik disini untuk selesaikan') 
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->color($color)
                 ->url($editUrl) 
