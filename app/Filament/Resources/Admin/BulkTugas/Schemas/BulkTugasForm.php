@@ -14,9 +14,8 @@ class BulkTugasForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(3) // Menggunakan 3 kolom untuk tata letak yang lebih rapi
+            ->columns(3) 
             ->schema([
-                // Kolom 1: USER & SHIFT
                 Section::make('Penugasan Karyawan')
                     ->columnSpan(1)
                     ->schema([
@@ -38,7 +37,6 @@ class BulkTugasForm
                             ->required(),
                     ]),
 
-                // Kolom 2: JUDUL & DESKRIPSI
                 Section::make('Detail Tugas Harian')
                     ->columnSpan(2)
                     ->schema([
@@ -54,7 +52,6 @@ class BulkTugasForm
                             ->required(),
                     ]),
 
-                // Kolom 3: RENTANG TANGGAL (PENTING UNTUK BULK)
                 Section::make('Periode Penugasan')
                     ->columnSpan('full')
                     ->schema([
@@ -70,7 +67,6 @@ class BulkTugasForm
                             ->columnSpan(1),
                     ]),
 
-                // Status Awal
                 Components\Hidden::make('status')
                     ->default('Pending'),
             ]);

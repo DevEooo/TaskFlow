@@ -75,7 +75,6 @@ class CreateAbsensi extends CreateRecord
                 ->first();
 
             if (!$absensi) {
-
                 Notification::make()
                     ->danger()
                     ->title('Gagal Check Out')
@@ -94,7 +93,6 @@ class CreateAbsensi extends CreateRecord
             if ($jadwalShift && $jadwalShift->shift) {
                 $shiftEndTime = today()->setTimeFromTimeString($jadwalShift->shift->end_time);
                 if ($currentTime->lessThan($shiftEndTime)) {
-
                     Notification::make()
                         ->warning()
                         ->title('Peringatan Check Out Dini')
@@ -102,7 +100,6 @@ class CreateAbsensi extends CreateRecord
                         ->send();
                 }
             }
-
 
             $absensi->update([
                 'check_out' => $currentTime,
@@ -120,7 +117,7 @@ class CreateAbsensi extends CreateRecord
         $status = UserAbsensiResource::getTodayAbsensiStatus()['status'];
 
         if ($status === 'done') {
-            return []; // Hide action buttons when attendance is done
+            return [];  
         }
 
         $actionLabel = match ($status) {
@@ -140,7 +137,6 @@ class CreateAbsensi extends CreateRecord
         $user = auth()->user();
         $time = now()->format('H:i');
 
-        // Tentukan konten pesan
         if ($status === 'check_in') {
             $title = 'Check In Berhasil';
             $body = "Anda masuk pada pukul {$time}. Selamat bekerja!";
@@ -153,20 +149,14 @@ class CreateAbsensi extends CreateRecord
             $color = 'info';
         }
 
-        // 1. Buat Objek Notifikasi
         $notification = Notification::make()
             ->title($title)
             ->body($body)
             ->icon($icon)
             ->color($color);
 
-        // 2. Kirim Notifikasi Database ke DIRI SENDIRI (Agar muncul di lonceng User)
         $notification->sendToDatabase($user);
 
-        // 3. (Opsional) Kirim Notifikasi ke SEMUA ADMIN jika Telat
-        // Anda bisa menambahkan logika if($isLate) di sini untuk notifikasi ke Admin
-
-        // 4. Return notifikasi untuk Toast (muncul sesaat di pojok kanan atas)
         return $notification;
     }
     protected function getRedirectUrl(): string

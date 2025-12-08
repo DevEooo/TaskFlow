@@ -22,7 +22,6 @@ class ViewTugasKu extends ViewRecord
     {
         parent::mount($record);
 
-        // Memastikan user hanya bisa mengakses tugasnya sendiri
         abort_unless($this->getRecord()->user_id === auth()->id(), 403);
     }
 }

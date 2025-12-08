@@ -73,9 +73,7 @@ class ShiftsResource extends Resource
                     ->dateTime('d M Y')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            // ->filters([])
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),

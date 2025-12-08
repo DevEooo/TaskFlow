@@ -23,8 +23,6 @@ class UserAbsensiResource extends Resource
     protected static ?string $slug = "absensi-karyawan";
     protected static ?string $label = "Absensi Kehadiran";
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
-
-    // 1. Metode getUrl (Dipertahankan agar redirect ke 'create')
     public static function getUrl(string|null $name = null, array $parameters = [], bool $isAbsolute = true, string|null $panel = null, Model|null $tenant = null, bool $shouldGuessMissingParameters = false): string
     {
         if ($name === 'index') {
@@ -32,8 +30,6 @@ class UserAbsensiResource extends Resource
         }
         return parent::getUrl($name, $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
     }
-
-    // Fungsi helper untuk mendapatkan status absensi (digunakan di berbagai closure)
     public static function getTodayAbsensiStatus(): array
     {
         $userId = auth()->id();
@@ -43,7 +39,7 @@ class UserAbsensiResource extends Resource
 
         $today = Carbon::today()->toDateString();
         $absensi = Absensi::where('user_id', $userId)
-            ->where(fn ($query) => $query->whereDate('check_in', $today)->orWhereDate('check_out', $today))
+            ->where(fn($query) => $query->whereDate('check_in', $today)->orWhereDate('check_out', $today))
             ->first();
 
         if (!$absensi) {
@@ -54,16 +50,13 @@ class UserAbsensiResource extends Resource
         }
         return ['status' => 'pending_out', 'absensi' => $absensi];
     }
-
-    // 2. Metode Form: Ditambahkan Section Status Dinamis
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            // --- SECTION STATUS KEHADIRAN HARI INI (BARU) ---
             Section::make('Status Kehadiran Hari Ini')
                 ->schema([
                     Components\Placeholder::make('status_text')
-                        ->label('') 
+                        ->label('')
                         ->content(function () {
                             $data = self::getTodayAbsensiStatus();
                             $absensi = $data['absensi'];
@@ -93,17 +86,14 @@ class UserAbsensiResource extends Resource
                                 'class' => "p-4 rounded-lg text-lg font-bold text-{$color}-600 bg-{$color}-50 border border-{$color}-200",
                             ];
                         }),
-                ])->columns(1), 
-            // --- END OF SECTION STATUS ---
+                ])->columns(1),
 
-
-            // --- SECTION INPUT KEHADIRAN (DYNAMIC VISIBILITY & OPTIONS) ---
             Section::make('Input Kehadiran')
-                ->hidden(fn () => self::getTodayAbsensiStatus()['status'] === 'done')
+                ->hidden(fn() => self::getTodayAbsensiStatus()['status'] === 'done')
                 ->schema([
                     Components\Radio::make('status')
                         ->label('Tipe Absensi')
-                        ->live() // Aktifkan live mode untuk mengubah helper text
+                        ->live()
                         ->options(function () {
                             $status = self::getTodayAbsensiStatus()['status'];
                             $options = [
@@ -150,7 +140,7 @@ class UserAbsensiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([]);  
+            ->columns([]);
     }
 
     public static function getRelations(): array
@@ -168,8 +158,8 @@ class UserAbsensiResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return true; 
-    } 
+        return true;
+    }
     public static function canEdit(Model $record): bool
     {
         return false;

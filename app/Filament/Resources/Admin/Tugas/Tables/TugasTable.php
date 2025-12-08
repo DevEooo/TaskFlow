@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Admin\Tugas\Tables;
 use Filament\Tables\Columns;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\EditAction; 
+use Filament\Actions\DeleteAction;
 
 class TugasTable
 {
@@ -74,6 +76,10 @@ class TugasTable
                         'Complete' => 'Complete',
                     ])
                     ->label('Filter Status Tugas')
+            ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(), 
             ])
             ->defaultSort('created_at', 'desc');
     }

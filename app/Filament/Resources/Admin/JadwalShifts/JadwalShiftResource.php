@@ -16,6 +16,8 @@ use Filament\Tables\Columns;
 use Filament\Forms\Components;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Validation\Rules\Unique;
+use Filament\Actions\EditAction; 
+use Filament\Actions\DeleteAction; 
 
 class JadwalShiftResource extends Resource
 {
@@ -88,7 +90,12 @@ class JadwalShiftResource extends Resource
                     ->relationship('shift', 'name')
                     ->label('Filter Jadwal Shift')
             ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(), 
+            ])
             ->defaultSort('date', 'desc');
+            
     }
 
     public static function getPages(): array

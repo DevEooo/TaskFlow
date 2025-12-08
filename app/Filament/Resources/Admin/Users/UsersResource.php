@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Admin\Users;
 use App\Filament\Resources\Admin\Users\Pages\CreateUsers;
 use App\Filament\Resources\Admin\Users\Pages\EditUsers;
 use App\Filament\Resources\Admin\Users\Pages\ListUsers;
-use App\Filament\Resources\Admin\Users\Schemas\UsersForm;
 use App\Filament\Resources\Admin\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
@@ -15,9 +14,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
-use Filament\Forms\Form;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
@@ -65,9 +61,7 @@ class UsersResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

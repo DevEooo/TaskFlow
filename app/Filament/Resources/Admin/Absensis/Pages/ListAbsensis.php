@@ -12,7 +12,6 @@ class ListAbsensis extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        // Admin tidak perlu membuat Absensi manual, tapi boleh jika ingin koreksi
         return [
             Actions\CreateAction::make()->label('Buat Absensi Manual'),
         ];

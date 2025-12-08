@@ -8,7 +8,4 @@ use Filament\Resources\Pages\ListRecords;
 class ListAbsensis extends ListRecords
 {
     protected static string $resource = UserAbsensiResource::class;
-
-    // Biarkan ini kosong, karena user tidak seharusnya melihat tabel.
-    // Logika pengalihan (redirect) ada di AbsensiResource::getUrl().
 }

@@ -12,6 +12,7 @@ use UnitEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns;
+use Filament\Tables\Filters\SelectFilter;
 
 class JadwalKuResource extends Resource
 {
@@ -22,17 +23,13 @@ class JadwalKuResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = 'Kelola';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
-    // --- PERBAIKAN DI SINI: Global Scope untuk Resource ini ---
     public static function getEloquentQuery(): Builder
     {
-        // Kita panggil parent query dulu agar scope bawaan Filament (seperti SoftDelete) tetap jalan
         return parent::getEloquentQuery()
-        // ⭐ TAMBAHKAN FILTER INI
         ->whereNotNull('shift_id') 
-        // ⭐ TAMBAHKAN FILTER INI
         ->where('user_id', auth()->id()) 
         ->with('shift')
-        ->orderBy('date', 'asc'); // Eager load relasi shift di sini agar lebih efisien
+        ->orderBy('date', 'asc');  
     }
 
     public static function canCreate(): bool { return false; }
@@ -46,7 +43,6 @@ class JadwalKuResource extends Resource
                 Columns\TextColumn::make('date')
                     ->label('Tanggal')
                     ->date('d M Y (D)') 
-                    ->sortable()
                     ->color(fn($state) => $state->isToday() ? 'primary' : 'gray'), 
 
                 Columns\TextColumn::make('shift.name')
@@ -65,13 +61,17 @@ class JadwalKuResource extends Resource
                     ->time('H:i')
                     ->placeholder('N/A'),
             ])
-            ->defaultSort('date', 'asc') // Sorting tetap di sini
-            ->actions([
-                //
-            ]);
+            ->filters([
+                SelectFilter::make('name')
+                    ->options([
+                        'Shift Pagi' => 'Shift Pagi',
+                        'Shift Siang' => 'Shift Siang',
+                        'Shift Malam' => 'Shift Malam',
+                    ])
+                    ->label('Filter Status Tugas')
+            ])
+            ->defaultSort('date', 'asc');
     }
-
-
     
     public static function getPages(): array
     {

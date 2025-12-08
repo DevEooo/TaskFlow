@@ -10,11 +10,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use Filament\Actions\Action;; 
-
-// ⭐ IMPORT RESOURCE TUGAS YANG ADA DI PANEL USER
-use App\Filament\Resources\User\TugasKus\TugasKuResource; // ASUMSI: GANTI DENGAN NAMA RESOURCE USER ANDA YANG BENAR
+use App\Models\User; 
+use App\Filament\Resources\User\TugasKus\TugasKuResource;  
 
 class CreateBulkTugas extends CreateRecord
 {
@@ -39,7 +36,6 @@ class CreateBulkTugas extends CreateRecord
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             \Log::info("Creating task for date: " . $date->format('Y-m-d'));
 
-            // ... (Kode pembuatan Tugas dan JadwalShift) ...
             Tugas::create([
                 'user_id' => $userId,
                 'shift_id' => $shiftId,
@@ -63,17 +59,14 @@ class CreateBulkTugas extends CreateRecord
                 $scheduleCreatedCount++;
                 \Log::info("Schedule created, count: {$scheduleCreatedCount}");
             }
-            // ------------------------------------------
         }
 
         \Log::info("Loop finished. Tasks: {$tasksCreatedCount}, Schedules: {$scheduleCreatedCount}");
 
-        // Send a single notification to the user after creating all tasks
         if ($recipient && $recipient->role === 'user') {
             \Log::info("Attempting to send notification to user ID: {$recipient->id}, Name: {$recipient->name}");
 
             try {
-                // Use database directly to insert notification
                 \DB::table('notifications')->insert([
                     'id' => \Illuminate\Support\Str::uuid(),
                     'type' => 'Filament\Notifications\DatabaseNotification',
@@ -101,11 +94,9 @@ class CreateBulkTugas extends CreateRecord
 
                 \Log::info("Notification inserted directly to database for user ID: {$recipient->id}");
 
-                // Check if notification was saved
                 $notificationCount = $recipient->notifications()->count();
                 \Log::info("User now has {$notificationCount} notifications in database");
 
-                // Also notify the admin that the notification was sent
                 Notification::make()
                     ->title('Notifikasi Tugas Dikirim')
                     ->body("Notifikasi tugas telah dikirim ke {$recipient->name} ({$recipient->email}). Total notifications: {$notificationCount}")
@@ -147,7 +138,6 @@ class CreateBulkTugas extends CreateRecord
         return new Tugas();
     }
     
-    // ... (Metode lainnya tetap sama)
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('create');

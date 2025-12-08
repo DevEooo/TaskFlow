@@ -11,8 +11,6 @@ class EditAbsensi extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            // Tidak ada aksi header
-        ];
+        return [];
     }
 }

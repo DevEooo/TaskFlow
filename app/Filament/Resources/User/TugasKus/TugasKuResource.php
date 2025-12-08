@@ -30,12 +30,12 @@ class TugasKuResource extends Resource
     {
         return false;
     }
+
     public static function form(Schema $schema): Schema
     {
         return TugasKuForm::configure($schema);
     }
 
-    // Global Scope: Filter hanya tugas milik user yang login
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -60,12 +60,12 @@ class TugasKuResource extends Resource
                 Columns\TextColumn::make('location')
                     ->label('Penempatan')
                     ->badge()
-                    ->color('info'), // badge warna biru terang
+                    ->color('info'),  
 
                 Columns\TextColumn::make('task_description')
                     ->label('Deskripsi Singkat')
-                    ->limit(30) // Batasi deskripsi agar tabel tidak terlalu lebar
-                    ->tooltip(fn($state) => $state), // Tambahkan tooltip untuk melihat deskripsi penuh
+                    ->limit(30)  
+                    ->tooltip(fn($state) => $state),  
 
                 Columns\TextColumn::make('shift.name')
                     ->label('Shift Terkait')
@@ -99,7 +99,7 @@ class TugasKuResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->actions([
                 EditAction::make()
-                    ->label('Ambil / Selesaikan Tugas'),
+                    ->label('Selesaikan Tugas'),
             ]);
     }
     public static function getPages(): array

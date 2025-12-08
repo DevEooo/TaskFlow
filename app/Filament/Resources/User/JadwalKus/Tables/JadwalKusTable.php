@@ -13,12 +13,8 @@ class JadwalKusTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
-                //
-            ])
-            ->filters([
-                //
-            ])
+            ->columns([])
+            ->filters([])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
