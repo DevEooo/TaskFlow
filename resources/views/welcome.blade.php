@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TaskFlow - Monitoring OB</title>
+    <title>TaskFlow - SI Monitoring OB</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -25,9 +25,9 @@
             <div class="flex flex-col items-center justify-center mb-12">
                 {{-- Logo dan Teks --}}
                 {{-- (SVG dan Teks Welcome Anda di sini) --}}
-                <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Welcome to TaskFlow</h1>
+                <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Selamat datang di TaskFlow</h1>
                 <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 text-center max-w-2xl">
-                    Manage your tasks, track attendance, and collaborate with your team efficiently.
+                    Kelola tugas, track absensi, dan kolaborasi dengan timmu secara efisien.
                 </p>
                 
                 {{-- BAGIAN UTAMA (LOGIN/REGISTER UNTUK SEMUA USER) --}}

@@ -27,12 +27,6 @@ class LatestTugasWidget extends BaseWidget
                     ->descriptionIcon('heroicon-m-face-smile')
                     ->color('success')
                     ->chart([7, 2, 10, 3, 15, 4, 17]),
-                
-                 Stat::make('Tugas Baru', 'Buat Sekarang')
-                    ->description('Klik untuk menambah tugas')
-                    ->icon('heroicon-m-plus')
-                    ->url(\App\Filament\Resources\User\TugasKus\TugasKuResource::getUrl('create', panel: 'user'))
-                    ->color('gray'),
             ];
         }
 
