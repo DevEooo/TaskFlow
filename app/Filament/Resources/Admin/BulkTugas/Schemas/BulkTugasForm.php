@@ -62,30 +62,18 @@ class BulkTugasForm
 
                         Components\DatePicker::make('end_date')
                             ->label('Tanggal Akhir Penugasan')
-                            ->after('start_date') // Validasi: Akhir harus setelah Mulai
+                            ->after('start_date')
                             ->required()
                             ->columnSpan(1),
-                    ]),
-
-                Section::make('Periode Penugasan')
-                    ->columnSpan('full')
-                    ->schema([
-                        Components\DatePicker::make('start_date')
-                            ->label('Tanggal Mulai')
-                            ->required(),
-
-                        Components\DatePicker::make('end_date')
-                            ->label('Tanggal Akhir')
-                            ->after('start_date')
-                            ->required(),
 
                         Components\TimePicker::make('deadline_time')
                             ->label('Batas Waktu Harian (Deadline)')
                             ->seconds(false)
-                            ->default('17:00') 
+                            ->default('17:00')
                             ->required()
                             ->helperText('Jam ini adalah default dari deadline tugas setiap harinya.'),
-                    ])->columns(3),
+                    ]),
+
                 Components\Hidden::make('status')
                     ->default('Pending'),
             ]);
