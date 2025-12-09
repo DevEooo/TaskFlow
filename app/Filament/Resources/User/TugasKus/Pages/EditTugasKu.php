@@ -5,6 +5,7 @@ namespace App\Filament\Resources\User\TugasKus\Pages;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Carbon;
 use App\Filament\Resources\User\TugasKus\TugasKuResource;
+use Filament\Notifications\Notification;
 
 class EditTugasKu extends EditRecord
 {
@@ -23,9 +24,24 @@ class EditTugasKu extends EditRecord
     {
         if ($data['photo_after_path']) {
             $data['status'] = 'Complete';
-            $data['completed_at'] = Carbon::now();
-        }
+            $waktuSelesai = Carbon::now();
+            $data['completed_at'] = $waktuSelesai;
 
+            $deadline = $this->getRecord()->deadline_at;
+
+            if ($deadline && $waktuSelesai->greaterThan($deadline)) {
+                $data['is_late'] = true;  
+                
+                Notification::make()
+                    ->warning()
+                    ->title('Tugas Diselesaikan Terlambat')
+                    ->body("Tugas selesai melewati batas waktu ({$deadline->format('H:i')}).")
+                    ->send();
+            } else {
+                $data['is_late'] = false;
+            }
+        } 
+        
         return $data;
     }
 

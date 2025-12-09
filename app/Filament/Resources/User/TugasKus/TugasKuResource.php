@@ -60,16 +60,30 @@ class TugasKuResource extends Resource
                 Columns\TextColumn::make('location')
                     ->label('Penempatan')
                     ->badge()
-                    ->color('info'),  
+                    ->color('info'),
 
                 Columns\TextColumn::make('task_description')
                     ->label('Deskripsi Singkat')
-                    ->limit(30)  
-                    ->tooltip(fn($state) => $state),  
+                    ->limit(30)
+                    ->tooltip(fn($state) => $state),
 
                 Columns\TextColumn::make('shift.name')
                     ->label('Shift Terkait')
                     ->placeholder('-'),
+
+                Columns\TextColumn::make('deadline_at')
+                    ->label('Batas Waktu')
+                    ->dateTime('d M Y, H:i')
+                    ->sortable()
+                    ->color(
+                        fn($record) =>
+                        ($record->status !== 'Complete' && now() > $record->deadline_at) ? 'danger' :
+                        ($record->status !== 'Complete' && now()->diffInHours($record->deadline_at, false) < 2 ? 'warning' : 'gray')
+                    )
+                    ->description(
+                        fn($record) =>
+                        ($record->status !== 'Complete' && now() > $record->deadline_at) ? 'Terlewat!' : ''
+                    ),
 
                 Columns\TextColumn::make('status')
                     ->label('Status')

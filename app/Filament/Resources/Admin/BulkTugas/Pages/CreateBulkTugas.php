@@ -10,8 +10,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User; 
-use App\Filament\Resources\User\TugasKus\TugasKuResource;  
+use App\Models\User;
+use App\Filament\Resources\User\TugasKus\TugasKuResource;
 
 class CreateBulkTugas extends CreateRecord
 {
@@ -36,6 +36,9 @@ class CreateBulkTugas extends CreateRecord
         for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
             \Log::info("Creating task for date: " . $date->format('Y-m-d'));
 
+            $deadlineTime = $data['deadline_time'];
+            $deadlineAt = $date->copy()->setTimeFromTimeString($deadlineTime);
+
             Tugas::create([
                 'user_id' => $userId,
                 'shift_id' => $shiftId,
@@ -45,6 +48,8 @@ class CreateBulkTugas extends CreateRecord
                 'status' => 'Pending',
                 'assigned_by_id' => $assignedById,
                 'created_at' => $date,
+                'deadline_at' => $deadlineAt,
+                'is_late' => false,
             ]);
             $tasksCreatedCount++;
             \Log::info("Task created, count: {$tasksCreatedCount}");
@@ -136,8 +141,9 @@ class CreateBulkTugas extends CreateRecord
             ->send();
 
         return new Tugas();
+        
     }
-    
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('create');
