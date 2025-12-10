@@ -1,1 +1,1 @@
-    Hari ini (9/12) Saya lanjut mengerjakan fitur deadline. Karena di project ini masih belum ada sistem deadline yang berguna untuk mengklasifikasikan suatu tugas dikatakan tidak terpenuhi. Dan saya juga akan memodifikasi beberapa elemen di resource BulkTugas dan JadwalShift.
+    Mohon maaf atas keterlambatan saya. Hari ini saya akan menambahkan beberapa indikator untuk keterlambatan tugas di kedua panel Admin & User. Dan saya juga berencana untuk menambahkan widget "Gamifikasi" di panel user. 
