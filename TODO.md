@@ -1,1 +1,1 @@
-    Mohon maaf atas keterlambatan saya. Hari ini saya akan menambahkan beberapa indikator untuk keterlambatan tugas di kedua panel Admin & User. Dan saya juga berencana untuk menambahkan widget "Gamifikasi" di panel user. 
+    Mohon maaf atas keterlambatan saya. Hari ini saya akan menambahkan beberapa indikator untuk keterlambatan tugas di kedua panel Admin & User. Dan saya juga berencana untuk menambahkan widget "Gamifikasi" di panel user, yang berguna untuk memonitoring kelengkapan tugas.
