@@ -17,6 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\User\LatestTugasWidget;
+use App\Filament\Widgets\User\ShiftWidget;
 class UserPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -41,6 +42,7 @@ class UserPanelProvider extends PanelProvider
             ->widgets([
                 \App\Filament\Widgets\CustomAccountWidget::class,
                 LatestTugasWidget::class,
+                ShiftWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

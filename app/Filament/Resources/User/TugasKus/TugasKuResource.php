@@ -39,8 +39,7 @@ class TugasKuResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc');
+            ->where('user_id', auth()->id());
     }
 
     public static function table(Table $table): Table
@@ -65,11 +64,12 @@ class TugasKuResource extends Resource
                 Columns\TextColumn::make('task_description')
                     ->label('Deskripsi Singkat')
                     ->limit(30)
-                    ->tooltip(fn($state) => $state),
+                    ->tooltip(fn($state) => $state)
+                    ->placeholder('Tidak ada deskripsi'),
 
                 Columns\TextColumn::make('shift.name')
                     ->label('Shift Terkait')
-                    ->placeholder('-'),
+                    ->placeholder('Tidak ada'),
 
                 Columns\TextColumn::make('deadline_at')
                     ->label('Batas Waktu')
@@ -90,8 +90,8 @@ class TugasKuResource extends Resource
                     ->badge()
                     ->color(fn(string $state) => match ($state) {
                         'Pending' => 'warning',
-                        'In Progress' => 'info',
-                        'Complete' => 'success',
+                        'Dalam Proses' => 'info',
+                        'Selesai' => 'success',
                         default => 'gray',
                     })
                     ->sortable(),
@@ -105,15 +105,49 @@ class TugasKuResource extends Resource
                 SelectFilter::make('status')
                     ->options([
                         'Pending' => 'Pending',
-                        'In Progress' => 'In Progress',
-                        'Complete' => 'Complete',
+                        'In Progress' => 'Dalam Proses',
+                        'Complete' => 'Selesai',
                     ])
-                    ->label('Filter Status Tugas')
+                    ->label('Status Tugas'),
+                SelectFilter::make('task_type')
+                    ->options([
+                        'active' => 'Tugas Aktif',
+                        'completed' => 'Telah diselesaikan',
+                        'missed' => 'Terlewat',
+                    ])
+                    ->label('Jenis Tugas')
+                    ->query(function (Builder $query, array $data): Builder {
+                        return match ($data['value']) {
+                            'active' => $query->where('status', '!=', 'Selesai')->where(function ($q) {
+                                $q->whereNull('deadline_at')->orWhere('deadline_at', '>=', now());
+                            }),
+                            'completed' => $query->where('status', '=', 'Selesai'),
+                            'missed' => $query->where('status', '!=', 'Selesai')->where('deadline_at', '<', now()),
+                            default => $query,
+                        };
+                    }),
+                SelectFilter::make('schedule_type')
+                    ->options([
+                        'today' => 'Hari Ini',
+                        'past' => 'Lampau',
+                        'upcoming' => 'Mendatang',
+                    ])
+                    ->label('Jenis Jadwal')
+                    ->default('today')
+                    ->query(function (Builder $query, array $data): Builder {
+                        return match ($data['value']) {
+                            'today' => $query->whereDate('deadline_at', today()),
+                            'past' => $query->whereDate('deadline_at', '<', today()),
+                            'upcoming' => $query->whereDate('deadline_at', '>', today()),
+                            default => $query->whereDate('deadline_at', today()),
+                        };
+                    }),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
                 EditAction::make()
-                    ->label('Selesaikan Tugas'),
+                    ->label('Selesaikan')
+                    ->visible(fn ($record) => $record->status !== 'Complete'),
             ]);
     }
     public static function getPages(): array

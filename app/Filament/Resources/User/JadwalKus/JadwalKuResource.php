@@ -26,10 +26,9 @@ class JadwalKuResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-        ->whereNotNull('shift_id') 
-        ->where('user_id', auth()->id()) 
-        ->with('shift')
-        ->orderBy('date', 'asc');  
+        ->whereNotNull('shift_id')
+        ->where('user_id', auth()->id())
+        ->with('shift');
     }
 
     public static function canCreate(): bool { return false; }
