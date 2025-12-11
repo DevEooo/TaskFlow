@@ -15,7 +15,7 @@
                         Jadwal Hari Ini
                     </h2>
                     <p class="text-xs text-gray-400 dark:text-gray-500">
-                        {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
+                        {{ $todayFormatted }}
                     </p>
                 </div>
             </div>
@@ -45,13 +45,13 @@
                     <div class="text-center border-r border-gray-100 dark:border-gray-700">
                         <span class="text-xs text-gray-400 uppercase font-bold">Mulai</span>
                         <p class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($schedule->shift->start_time)->format('H:i') }}
+                            {{ $schedule->start_time_formatted }}
                         </p>
                     </div>
                     <div class="text-center">
                         <span class="text-xs text-gray-400 uppercase font-bold">Selesai</span>
                         <p class="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($schedule->shift->end_time)->format('H:i') }}
+                            {{ $schedule->end_time_formatted }}
                         </p>
                     </div>
                 </div>

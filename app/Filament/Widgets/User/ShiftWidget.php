@@ -3,15 +3,16 @@
 namespace App\Filament\Widgets\User;
 
 use App\Models\JadwalShift;
-use Filament\Widgets\Widget;
+use Filament\Widgets\Widget; // Ganti ke Livewire Component Base
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-class ShiftWidget extends Widget
+class ShiftWidget extends Widget // Tetap gunakan Widget class bawaan Filament
 {
-    protected static string $view = 'filament.widgets.user.shift-widget';
-    protected static ?int $sort = 1; 
-    protected int | string | array $columnSpan = 1; 
+    protected static ?int $sort = 1;
+    protected int | string | array $columnSpan = 1;
+
+    protected string $view = 'filament.widgets.user.shift-widget';
 
     protected function getViewData(): array
     {
@@ -19,17 +20,25 @@ class ShiftWidget extends Widget
         $today = Carbon::today();
 
         $schedule = JadwalShift::where('user_id', $userId)
-            ->where('date', $today->toDateString())
-            ->with('shift')  
+            ->whereDate('date', $today)
+            ->with('shift')
             ->first();
+
         $status = 'off';  
         $statusLabel = 'Libur / Off';
         $color = 'gray';
 
         if ($schedule && $schedule->shift) {
             $now = Carbon::now();
-            $start = Carbon::parse($schedule->shift->start_time);
-            $end = Carbon::parse($schedule->shift->end_time);
+            
+            // Menggabungkan tanggal hari ini dengan waktu shift (PENTING untuk perbandingan)
+            $start = Carbon::parse($today->toDateString() . ' ' . $schedule->shift->start_time);
+            $end = Carbon::parse($today->toDateString() . ' ' . $schedule->shift->end_time);
+
+            // Jika Shift melintasi hari (misal 22:00 - 06:00), maka end harus di hari berikutnya
+            if ($end->lessThan($start)) {
+                $end->addDay();
+            }
 
             if ($now->between($start, $end)) {
                 $status = 'ongoing';
@@ -44,6 +53,10 @@ class ShiftWidget extends Widget
                 $statusLabel = 'Shift Selesai';
                 $color = 'warning';
             }
+            
+            // Pastikan kita mengirim waktu yang benar untuk ditampilkan di Blade
+            $schedule->start_time_formatted =  Carbon::parse($schedule->shift->start_time)->format('H:i');
+            $schedule->end_time_formatted =  Carbon::parse($schedule->shift->end_time)->format('H:i');
         }
 
         return [
@@ -51,6 +64,7 @@ class ShiftWidget extends Widget
             'status' => $status,
             'statusLabel' => $statusLabel,
             'statusColor' => $color,
+            'todayFormatted' => Carbon::now()->translatedFormat('l, d F Y'),
         ];
     }
 }
