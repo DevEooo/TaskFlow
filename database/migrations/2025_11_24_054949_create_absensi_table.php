@@ -11,13 +11,9 @@ return new class extends Migration
         Schema::create('absensi', function (Blueprint $table) {
             $table->id();
             
-            // Relasi ke User (OB yang melakukan absen)
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            
-            // Relasi ke Shift (Jika OB punya jadwal shift tetap)
             $table->foreignId('shift_id')->nullable()->constrained('shift')->nullOnDelete();
 
-            // Waktu Absensi
             $table->dateTime('check_in')->nullable()->comment('Waktu masuk kerja');
             $table->dateTime('check_out')->nullable()->comment('Waktu pulang kerja');
 

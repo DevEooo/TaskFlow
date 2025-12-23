@@ -7,8 +7,10 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "4.0",
+        "filament/infolists": "^4.0",
         "laravel/framework": "^11.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "saade/filament-fullcalendar": "4.x-dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

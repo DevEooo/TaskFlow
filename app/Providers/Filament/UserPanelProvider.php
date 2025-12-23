@@ -17,7 +17,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Widgets\User\LatestTugasWidget;
-use App\Filament\Widgets\User\ShiftWidget;
+use App\Filament\Widgets\User\CalendarWidget;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+use App\Filament\Widgets\User\UpcomingAgendaWidget;
+
 class UserPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -42,7 +45,11 @@ class UserPanelProvider extends PanelProvider
             ->widgets([
                 \App\Filament\Widgets\CustomAccountWidget::class,
                 LatestTugasWidget::class,
-                ShiftWidget::class,
+                CalendarWidget::class,
+                UpcomingAgendaWidget::class
+            ])
+            ->plugins([
+                FilamentFullCalendarPlugin::make(),
             ])
             ->middleware([
                 EncryptCookies::class,
