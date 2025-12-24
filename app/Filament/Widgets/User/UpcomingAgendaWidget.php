@@ -12,8 +12,7 @@ use Carbon\Carbon;
 class UpcomingAgendaWidget extends BaseWidget
 {
     protected int | string | array $columnSpan = 1;
-
-    protected static ?int $sort = 30;
+    protected static ?int $sort = 40;
     protected static ?string $pollingInterval = '7s';
 
     public function table(Table $table): Table
@@ -28,7 +27,6 @@ class UpcomingAgendaWidget extends BaseWidget
                     ->limit(5)
             )
             ->heading('Agenda Mendatang')
-            ->description('Jadwal shift Anda untuk beberapa hari ke depan.')
             ->paginated(false)  
             ->columns([
                 Tables\Columns\TextColumn::make('date')

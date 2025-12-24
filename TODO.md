@@ -1,1 +1,0 @@
-Jadi, Hari ini saya akan melanjuti progress kemarin dengan memperbaiki error untuk membuat widget jadwal di panel user yang masih error kemarin.

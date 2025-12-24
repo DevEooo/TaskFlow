@@ -20,6 +20,7 @@ use App\Filament\Widgets\User\LatestTugasWidget;
 use App\Filament\Widgets\User\CalendarWidget;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use App\Filament\Widgets\User\UpcomingAgendaWidget;
+use App\Filament\Widgets\User\AttendanceChartWidget;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -46,7 +47,8 @@ class UserPanelProvider extends PanelProvider
                 \App\Filament\Widgets\CustomAccountWidget::class,
                 LatestTugasWidget::class,
                 CalendarWidget::class,
-                UpcomingAgendaWidget::class
+                UpcomingAgendaWidget::class,
+                AttendanceChartWidget::class,
             ])
             ->plugins([
                 FilamentFullCalendarPlugin::make(),

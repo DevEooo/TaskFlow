@@ -9,10 +9,9 @@ use Carbon\Carbon;
 
 class CalendarWidget extends FullCalendarWidget
 {
-    protected static ?int $sort = 30;
-    public Model | string | int | null $record = null;
+    protected static ?int $sort = 40;
     protected int | string | array $columnSpan = 1;
-    protected static ?string $pollingInterval = '7s';
+    public Model | string | int | null $record = null;
     public function fetchEvents(array $fetchInfo): array
     {
         return JadwalShift::query()
@@ -23,28 +22,20 @@ class CalendarWidget extends FullCalendarWidget
             ->get()
             ->map(function (JadwalShift $jadwal) {
                 
-                $color = match ($jadwal->shift->name) {
-                    'Pagi', 'Shift Pagi' => '#fbbf24', // Amber/Kuning
+                $color = match ($jadwal->shift?->name) {
+                    'Pagi', 'Shift Pagi' => '#fbbf24', // Amber
                     'Siang', 'Shift Siang' => '#3b82f6', // Biru
                     'Malam', 'Shift Malam' => '#8b5cf6', // Ungu
-                    default => '#10b981', // Emerald/Hijau
+                    default => '#10b981', // Hijau
                 };
-
-                $dateFormatted = Carbon::parse($jadwal->date)->format('Y-m-d');
-                $start = Carbon::parse($dateFormatted . ' ' . $jadwal->shift->start_time);
-                $end = Carbon::parse($dateFormatted . ' ' . $jadwal->shift->end_time);
-                
-                if ($end->lessThan($start)) {
-                    $end->addDay();
-                }
 
                 return [
                     'id'    => $jadwal->id,
-                    'title' => '', 
-                    'start' => $start->toIso8601String(),
-                    'end'   => $end->toIso8601String(),
+                    'title' => $jadwal->shift?->name ?? 'Shift',
+                    'start' => Carbon::parse($jadwal->date)->format('Y-m-d'),
                     'color' => $color,
-                    'display' => 'list-item', 
+                    'display' => 'block',
+                    'allDay' => true,
                 ];
             })
             ->all();
@@ -54,22 +45,16 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             'headerToolbar' => [
-                'left' => 'prev,next today',
+                'left' => 'prev,next',
                 'center' => 'title',
                 'right' => 'dayGridMonth',
-            ],
-            'initialView' => 'dayGridMonth',
-            'height' => 500,
-            'eventDisplay' => 'block',
+            ]
         ];
     }
-    
+
+    public function onEventClick(array $event): void {}
+
     protected function headerActions(): array
-    {
-        return [];
-    }
-    
-    protected function modalActions(): array
     {
         return [];
     }
