@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Widgets\Admin;
 
 use App\Models\Tugas;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;

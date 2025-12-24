@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Admin\BulkTugas\Pages;
 
-use App\Filament\Resources\Admin\BulkTugasResource;
-use App\Models\Tugas;
+use App\Filament\Resources\Admin\BulkTugas\BulkTugasResource;
+use App\Models\Tugas;   
 use App\Models\JadwalShift;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;

@@ -9,10 +9,10 @@ use Carbon\Carbon;
 
 class CalendarWidget extends FullCalendarWidget
 {
+    protected static ?int $sort = 30;
     public Model | string | int | null $record = null;
-
-    protected int | string | array $columnSpan = 2;
-
+    protected int | string | array $columnSpan = 1;
+    protected static ?string $pollingInterval = '7s';
     public function fetchEvents(array $fetchInfo): array
     {
         return JadwalShift::query()
@@ -40,10 +40,6 @@ class CalendarWidget extends FullCalendarWidget
 
                 return [
                     'id'    => $jadwal->id,
-                    /**
-                     * UI Update: Kosongkan title agar kotak kalender hanya menampilkan DOT warna.
-                     * Nama shift dan jam akan dilihat user pada widget 'Upcoming Events' di samping.
-                     */
                     'title' => '', 
                     'start' => $start->toIso8601String(),
                     'end'   => $end->toIso8601String(),

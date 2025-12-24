@@ -10,13 +10,14 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use App\Filament\Resources\Admin\BulkTugasResource; 
+use App\Filament\Resources\Admin\BulkTugas\BulkTugasResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Widgets\Admin\TugasStatsOverview;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets/Admin'), for: 'App\\Filament\\Widgets\\Admin')
             ->widgets([
                 \App\Filament\Widgets\CustomAccountWidget::class,
-                \App\Filament\Widgets\TugasStatsOverview::class,
+                TugasStatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

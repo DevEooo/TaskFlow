@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Admin; 
+namespace App\Filament\Resources\Admin\BulkTugas;
 
 use App\Filament\Resources\Admin\BulkTugas\Pages\CreateBulkTugas;
 use App\Filament\Resources\Admin\BulkTugas\Schemas\BulkTugasForm;
@@ -12,7 +12,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class BulkTugasResource extends Resource 
+class BulkTugasResource extends Resource
 {
     protected static ?string $model = Tugas::class;
     protected static ?string $navigationLabel = 'Buat Tugas & Jadwal';
