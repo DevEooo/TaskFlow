@@ -67,7 +67,7 @@ class JadwalKuResource extends Resource
                         'Shift Siang' => 'Shift Siang',
                         'Shift Malam' => 'Shift Malam',
                     ])
-                    ->label('Filter Status Tugas')
+                    ->label('Filter Jadwal Shift')
             ])
             ->defaultSort('date', 'asc');
     }

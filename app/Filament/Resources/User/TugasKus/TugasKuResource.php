@@ -90,7 +90,7 @@ class TugasKuResource extends Resource
                     ->badge()
                     ->color(fn(string $state) => match ($state) {
                         'Pending' => 'warning',
-                        'Dalam Proses' => 'info',
+                        'Dalam Proses' => 'danger',
                         'Selesai' => 'success',
                         default => 'gray',
                     })
@@ -105,41 +105,51 @@ class TugasKuResource extends Resource
                 SelectFilter::make('status')
                     ->options([
                         'Pending' => 'Pending',
-                        'In Progress' => 'Dalam Proses',
                         'Complete' => 'Selesai',
+                        'Overdue' => 'Terlambat',
                     ])
-                    ->label('Status Tugas'),
-                SelectFilter::make('task_type')
-                    ->options([
-                        'active' => 'Tugas Aktif',
-                        'completed' => 'Telah diselesaikan',
-                        'missed' => 'Terlewat',
-                    ])
-                    ->label('Jenis Tugas')
+                    ->label('Status Tugas')
                     ->query(function (Builder $query, array $data): Builder {
                         return match ($data['value']) {
-                            'active' => $query->where('status', '!=', 'Selesai')->where(function ($q) {
-                                $q->whereNull('deadline_at')->orWhere('deadline_at', '>=', now());
-                            }),
-                            'completed' => $query->where('status', '=', 'Selesai'),
-                            'missed' => $query->where('status', '!=', 'Selesai')->where('deadline_at', '<', now()),
+                            'Pending' => $query->where('status', 'Pending'),
+                            'Complete' => $query->where('status', 'Complete'),
+                            'Overdue' => $query->where('status', '!=', 'Complete')->where('deadline_at', '<', now()),
                             default => $query,
                         };
                     }),
+        
                 SelectFilter::make('schedule_type')
                     ->options([
-                        'today' => 'Hari Ini',
-                        'past' => 'Lampau',
+                        'hari_ini' => 'Hari Ini',
+                        'lalu' => 'Sudah lalu',
                         'upcoming' => 'Mendatang',
                     ])
-                    ->label('Jenis Jadwal')
-                    ->default('today')
+                    ->label('Waktu')
+                    ->default('hari_ini')
                     ->query(function (Builder $query, array $data): Builder {
                         return match ($data['value']) {
-                            'today' => $query->whereDate('deadline_at', today()),
-                            'past' => $query->whereDate('deadline_at', '<', today()),
-                            'upcoming' => $query->whereDate('deadline_at', '>', today()),
-                            default => $query->whereDate('deadline_at', today()),
+                            'hari_ini' => $query->where(function ($q) {
+                                $q->where(function ($subQ) {
+                                    $subQ->where('status', '!=', 'Complete')->whereDate('deadline_at', today());
+                                })->orWhere(function ($subQ) {
+                                    $subQ->where('status', 'Complete')->whereDate('completed_at', today());
+                                });
+                            }),
+                            'lalu' => $query->where(function ($q) {
+                                $q->where(function ($subQ) {
+                                    $subQ->where('status', '!=', 'Complete')->whereDate('deadline_at', '<', today());
+                                })->orWhere(function ($subQ) {
+                                    $subQ->where('status', 'Complete')->whereDate('completed_at', '<', today());
+                                });
+                            }),
+                            'upcoming' => $query->where('status', '!=', 'Complete')->whereDate('deadline_at', '>', today()),
+                            default => $query->where(function ($q) {
+                                $q->where(function ($subQ) {
+                                    $subQ->where('status', '!=', 'Complete')->whereDate('deadline_at', today());
+                                })->orWhere(function ($subQ) {
+                                    $subQ->where('status', 'Complete')->whereDate('completed_at', today());
+                                });
+                            }),
                         };
                     }),
             ])
@@ -147,14 +157,17 @@ class TugasKuResource extends Resource
             ->actions([
                 EditAction::make()
                     ->label('Selesaikan')
-                    ->visible(fn ($record) => $record->status !== 'Complete'),
-            ]);
+                    ->visible(fn ($record) => $record->status !== 'Complete' && ($record->deadline_at->isToday() || $record->deadline_at->isPast())),
+            ])
+            ->emptyStateHeading('Semua tugas sudah selesai!')
+            ->emptyStateDescription('Tidak ada tugas aktif yang perlu Anda kerjakan saat ini.')
+            ->emptyStateIcon('heroicon-o-check-circle');
     }
     public static function getPages(): array
     {
         return [
             'index' => ListTugasKus::route('/'),
-            'edit' => EditTugasKu::route('/{record}/edit'),
+            'edit' => EditTugasKu::route('/{record}/edit'),     
         ];
     }
 }
